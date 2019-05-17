@@ -2,7 +2,7 @@
 
 local ship = {}
 
-local sprite = love.graphics.newImage('spaceship.png')
+local sprite = love.graphics.newImage('tank_1.png')
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
 local speed = 0.05
@@ -102,8 +102,7 @@ function ship.draw()
   end
   
   love.graphics.draw(sprite, ship.x, ship.y, ship.r, 1, 1, sprite:getWidth() / 2, sprite:getHeight() / 2 )
-  love.graphics.draw(shake)
-  
+  love.graphics.draw(shake)  
   showInfo()
 end
 
