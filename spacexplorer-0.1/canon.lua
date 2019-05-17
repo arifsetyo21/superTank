@@ -3,7 +3,7 @@
 local canon = {}
 
 local sprite = love.graphics.newImage('missile.png')
-local sound = love.audio.newSource('laser.wav', 'static')
+local sound = love.audio.newSource('assets/s5.mp3', 'static')
 
 canon.missile = {}
 local rot
@@ -24,16 +24,16 @@ function canon.update()
     -- Cek rotasi tank untuk menentukan rotasi peluru dan arah jalan peluru
     -- peluru arah ke kiri
     if (canon.missile[i].r == math.rad(270)) then
-      canon.missile[i].x = canon.missile[i].x - 15
+      canon.missile[i].x = canon.missile[i].x - 25
     -- peluru arah ke atas
     elseif (canon.missile[i].r == math.rad(0)) then
-      canon.missile[i].y = canon.missile[i].y - 15
+      canon.missile[i].y = canon.missile[i].y - 25
     -- peluru arah ke kanan
     elseif (canon.missile[i].r == math.rad(90)) then
-      canon.missile[i].x = canon.missile[i].x + 15
+      canon.missile[i].x = canon.missile[i].x + 25
     -- peluru arah ke bawah
     elseif (canon.missile[i].r == math.rad(180)) then
-      canon.missile[i].y = canon.missile[i].y + 15
+      canon.missile[i].y = canon.missile[i].y + 25
     end
     
     -- menghilangkan missile ketika missile sampai pada batas window

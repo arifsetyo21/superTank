@@ -108,9 +108,11 @@ function love.load()
   
   shipAnchorY = centerY + 75
   
+    ----Back sound game super tank
+    
       bgmusic = love.audio.newSource('backsound_tank.mp3', 'stream')
       bgmusic:setLooping(true)
-      bgmusic:setVolume(0.5)
+      bgmusic:setVolume(0.4)
       engine = love.audio.newSource('tank_idle.mp3', 'stream')
       engine:setLooping(true)
       engine:setVolume(0.7)

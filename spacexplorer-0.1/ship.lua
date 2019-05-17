@@ -2,7 +2,7 @@
 
 local ship = {}
 
-local sprite = love.graphics.newImage('tank_1.png')
+local sprite = love.graphics.newImage('tank_2.png')
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
 local speed = 0.05
