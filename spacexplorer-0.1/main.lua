@@ -165,29 +165,42 @@ function love.update(dt)
     end
   end
   
-  if love.keyboard.isDown('left') then
-    shootLeft()
-  elseif love.keyboard.isDown('right') then
-    ship.x = ship.x + 1
-    ship.moveTo(ship.x, ship.y)
-    ship.right()
-  elseif love.keyboard.isDown('down') then
-    ship.y = ship.y + 1
-    ship.moveTo(ship.x, ship.y)
-    ship.down()
-  elseif love.keyboard.isDown('up') then
-    ship.y = ship.y - 1
-    ship.moveTo(ship.x, ship.y)
-    ship.up()
-  end
-  
-  if love.keyboard.isDown('a') then
-    for i = 0, #canon.missile do
-      if (canon.missile[i] = nil) then
-        canon.fire(ship.x, ship.y, ship.r)  
-      end
+  -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
+  if not gameover then
+    if love.keyboard.isDown('left') then
+      -- Kecepatan berjalan ship
+      ship.x = ship.x - 2
+      -- Mengubah posisi ship
+      ship.moveTo(ship.x, ship.y)
+      -- Menentukan rotasi ship sesuai arahnya
+      ship.left()
+    elseif love.keyboard.isDown('right') then
+      ship.x = ship.x + 2
+      ship.moveTo(ship.x, ship.y)
+      ship.right()
+    elseif love.keyboard.isDown('down') then
+      ship.y = ship.y + 2
+      ship.moveTo(ship.x, ship.y)
+      ship.down()
+    elseif love.keyboard.isDown('up') then
+      ship.y = ship.y - 2
+      ship.moveTo(ship.x, ship.y)
+      ship.up()
     end
   end
+  
+  -- Tambah kodisi ketika gameover tidak bisa eksekusi canon.fire
+  if love.keyboard.isDown('a') then    
+    if not gameover then
+      if (#canon.missile == 0) then
+        canon.fire(ship.x, ship.y, ship.r)
+      end
+    end
+  -- tambah tombol 'r' untuk reset gameover
+  elseif love.keyboard.isDown('r') and gameover then
+    resetGame()
+  end
+    
   
 end
 
@@ -234,11 +247,4 @@ function love.mousemoved(x, y)
       ship.moveTo(x, shipAnchorY)
     end
   end
-end
-
-function shootLeft()
-  ship.left()
-  ship.x = ship.x - 1
-  ship.moveTo(ship.x, ship.y)
-  
 end
