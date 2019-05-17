@@ -61,7 +61,7 @@ local function checkCollision()
     local dy = asteroids.rocks[i].y - ship.y
     local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
       
-    if d <= 48 then
+    if d <= 85 then
       explosion.emit(asteroids.rocks[i].x, asteroids.rocks[i].y)
       asteroids.rocks[i].life = false
       ship.shake()
@@ -108,8 +108,12 @@ function love.load()
   
   shipAnchorY = centerY + 75
   
-  bgmusic = love.audio.newSource('cavern.ogg', 'stream')
-  bgmusic:setLooping(true)
+      bgmusic = love.audio.newSource('backsound_tank.mp3', 'stream')
+      bgmusic:setLooping(true)
+      bgmusic:setVolume(0.5)
+      engine = love.audio.newSource('tank_idle.mp3', 'stream')
+      engine:setLooping(true)
+      engine:setVolume(0.7)
   
   bgspace = require('bgspace')
   
@@ -135,6 +139,7 @@ function love.load()
   gameover = false
   
   bgmusic:play()
+  
 end
 
 function love.update(dt)
@@ -174,19 +179,27 @@ function love.update(dt)
       ship.moveTo(ship.x, ship.y)
       -- Menentukan rotasi ship sesuai arahnya
       ship.left()
+      -- Memainkan soundFx engine ketika tombol ditekan
+      engine:play()
     elseif love.keyboard.isDown('right') then
       ship.x = ship.x + 2
       ship.moveTo(ship.x, ship.y)
       ship.right()
+      engine:play()
     elseif love.keyboard.isDown('down') then
       ship.y = ship.y + 2
       ship.moveTo(ship.x, ship.y)
       ship.down()
+      engine:play()
     elseif love.keyboard.isDown('up') then
       ship.y = ship.y - 2
       ship.moveTo(ship.x, ship.y)
       ship.up()
+      engine:play()
+    else
+      engine:stop()
     end
+
   end
   
   -- Tambah kodisi ketika gameover tidak bisa eksekusi canon.fire
