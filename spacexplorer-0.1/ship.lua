@@ -15,6 +15,8 @@ ship.r = 0
 ship.shield = 3
 ship.fuel = 42
 ship.life = true
+ship.height = height
+ship.width = width
 
 local exhtexture = love.graphics.newImage('exhaust.png')
 local exhaust = love.graphics.newParticleSystem(exhtexture, 500)

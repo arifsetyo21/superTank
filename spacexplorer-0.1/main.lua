@@ -27,6 +27,7 @@ local aidkit
 local canister
 local explosion
 local powerup
+local walls
 
 -- score and button
 local score
@@ -53,8 +54,24 @@ local function checkCollision()
         if score > hiscore then 
           hiscore = score 
         end
-      end
+      end     
     end
+    
+    local wx = walls.x - asteroids.rocks[i].x
+    local wy = walls.y - asteroids.rocks[i].y
+    local w = math.sqrt(math.pow(wx, 2) + math.pow(wy, 2))
+    
+    -- Check COllision wall and asteroids
+    if (CheckCollision(asteroids.rocks[i].x, asteroids.rocks[i].y, 16, 16, walls.x, walls.y, 683, 50)) then
+      explosion.emit(asteroids.rocks[i].x, asteroids.rocks[i].y)
+      asteroids.rocks[i].life = false
+    end
+    
+    if (CheckCollision(ship.x, ship.y, ship.width, ship.height, walls.x, walls.y, 683, 50 )) then
+      ship.x = ship.x + 0
+      ship.y = ship.y + 0
+    end
+    
     
     -- asteroids and ship
     local dx = asteroids.rocks[i].x - ship.x
@@ -129,6 +146,7 @@ function love.load()
   canister = require('canister')
   explosion = require('explosion')
   powerup = require('powerup')
+  walls = require('walls')
   
   font = love.graphics.newFont('whitrabt.ttf')
   love.graphics.setFont(font)
@@ -184,10 +202,15 @@ function love.update(dt)
       -- Memainkan soundFx engine ketika tombol ditekan
       engine:play()
     elseif love.keyboard.isDown('right') then
-      ship.x = ship.x + 2
-      ship.moveTo(ship.x, ship.y)
-      ship.right()
-      engine:play()
+      if (CheckCollision(ship.x, ship.y, ship.width, ship.height, 180, walls.y, 683, 50 )) then
+        ship.x = ship.x + 0
+        ship.right()
+      else
+        ship.x = ship.x + 2
+        ship.moveTo(ship.x, ship.y)
+        ship.right()
+        engine:play()
+      end
     elseif love.keyboard.isDown('down') then
       ship.y = ship.y + 2
       ship.moveTo(ship.x, ship.y)
@@ -225,6 +248,7 @@ function love.draw()
   bgspace.draw()
   
   stars.draw()
+  walls.draw()
   asteroids.draw()
   canon.draw()
   ship.draw()
@@ -262,4 +286,11 @@ function love.mousemoved(x, y)
       ship.moveTo(x, shipAnchorY)
     end
   end
+end
+
+function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+  return x1 < x2+w2 and
+         x2 < x1+w1 and
+         y1 < y2+h2 and
+         y2 < y1+h1
 end
