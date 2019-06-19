@@ -193,34 +193,90 @@ function love.update(dt)
   -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
   if not gameover then
     if love.keyboard.isDown('left') then
-      -- Kecepatan berjalan ship
-      ship.x = ship.x - 2
-      -- Mengubah posisi ship
-      ship.moveTo(ship.x, ship.y)
-      -- Menentukan rotasi ship sesuai arahnya
-      ship.left()
-      -- Memainkan soundFx engine ketika tombol ditekan
-      engine:play()
+      
+      
+         if (ship.x+70 < 1160 and ship.x > 340) then
+              if(ship.y+30 > 360 and ship.y-30 < 410 ) then
+                ship.x = ship.x - 0
+                ship.left()
+              else
+                ship.x = ship.x - 2
+                ship.moveTo(ship.x, ship.y)
+                ship.left()
+                engine:play()           
+                
+                end
+          else      
+      
+              
+              -- Kecepatan berjalan ship
+              ship.x = ship.x - 2
+              -- Mengubah posisi ship
+              ship.moveTo(ship.x, ship.y)
+              -- Menentukan rotasi ship sesuai arahnya
+              ship.left()
+              -- Memainkan soundFx engine ketika tombol ditekan
+              engine:play()
+      end
     elseif love.keyboard.isDown('right') then
-      if (CheckCollision(ship.x, ship.y, ship.width, ship.height, 180, walls.y, 683, 50 )) then
-        ship.x = ship.x + 0
-        ship.right()
+      --batasan tembok objek tidak bisa lewat jikake atas
+          if (ship.x+70 < 1160  and ship.x > 340) then
+              if(ship.y+30 > 360 and ship.y-30 < 410 ) then
+                ship.x = ship.x + 0
+                ship.right()
+              else
+                ship.x = ship.x + 2
+                ship.moveTo(ship.x, ship.y)
+                ship.right()
+                engine:play()           
+                
+                end
+          else
+            ship.x = ship.x + 2
+            ship.moveTo(ship.x, ship.y)
+            ship.right()
+            engine:play()
+          end
+    elseif love.keyboard.isDown('down') then
+      
+       --batasan tembok objek tidak bisa lewat jika ke bawah
+      if (ship.y+70 > 360  and ship.y+70 < 410) then
+              if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
+                    ship.y = ship.y + 0
+                    ship.down()
+                else
+                    ship.y = ship.y + 2
+                    ship.moveTo(ship.x, ship.y)
+                    ship.down()
+                    engine:play()          
+                
+              end
       else
-        ship.x = ship.x + 2
+        ship.y = ship.y + 2
         ship.moveTo(ship.x, ship.y)
-        ship.right()
+        ship.down()
         engine:play()
       end
-    elseif love.keyboard.isDown('down') then
-      ship.y = ship.y + 2
-      ship.moveTo(ship.x, ship.y)
-      ship.down()
-      engine:play()
     elseif love.keyboard.isDown('up') then
-      ship.y = ship.y - 2
-      ship.moveTo(ship.x, ship.y)
-      ship.up()
-      engine:play()
+      
+      -- objek tidak bisa naik ke atas 
+             if (ship.y-65 < 410 and ship.y-65 > 360 )then
+                    if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
+                    ship.y = ship.y - 0
+                    ship.up()
+                else
+                  ship.y = ship.y - 2
+                  ship.moveTo(ship.x, ship.y)
+                  ship.up()
+                  engine:play()
+                end
+            else     
+            
+                ship.y = ship.y - 2
+                ship.moveTo(ship.x, ship.y)
+                ship.up()
+                engine:play()
+            end
     else
       engine:stop()
     end
@@ -289,8 +345,8 @@ function love.mousemoved(x, y)
 end
 
 function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
-  return x1 < x2+w2 and
-         x2 < x1+w1 and
-         y1 < y2+h2 and
-         y2 < y1+h1
+  return x1 == x2+w2 and
+         x2 == x1+w1 and
+         y1 == y2+h2 and
+         y2 == y1+h1
 end
