@@ -1,7 +1,7 @@
 -- asteroids
 
 local asteroids = {}
-local img = love.graphics.newImage('asteroid.png')
+local img = love.graphics.newImage('assets/musuh.png')
 local et = 0
 
 asteroids.rocks = {}
@@ -12,7 +12,7 @@ function asteroids.create(dt)
     local r = {}
     r.x = math.random(10, love.graphics.getWidth() - 10)
     r.y = math.random(-30, -15)
-    r.a = math.random(-math.pi, math.pi)
+    r.a = 0
     r.life = true
   
     table.insert(asteroids.rocks, r)
@@ -22,8 +22,8 @@ end
 
 function asteroids.update()
   for i = #asteroids.rocks, 1, -1 do
-    asteroids.rocks[i].y = asteroids.rocks[i].y + 2
-    asteroids.rocks[i].a = asteroids.rocks[i].a + 0.03
+    asteroids.rocks[i].y = asteroids.rocks[i].y + 1  -- speed musuh
+    asteroids.rocks[i].a = asteroids.rocks[i].a 
     
     if (asteroids.rocks[i].y >= love.graphics.getHeight() + 32) or (not asteroids.rocks[i].life) then
       table.remove(asteroids.rocks, i)

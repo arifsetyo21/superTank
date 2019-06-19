@@ -98,7 +98,7 @@ local function showHUD()
   love.graphics.setColor(1, 1, 1, 1)
   if score == hiscore then love.graphics.setColor(1, 1, 0, 1) end
   love.graphics.print('score: ' .. score, 10, 10)
-  love.graphics.print('hi-score: ' .. hiscore, width - 125, 10)
+  love.graphics.print('hi-score: ' .. hiscore, width - 135, 10)
   
   if gameover then
     love.graphics.setColor(1, 1, 1, 1)
@@ -123,7 +123,8 @@ function love.load()
   centerX = width / 2
   centerY = height / 2
   
-  shipAnchorY = centerY + 75
+  shipAnchorY = centerY + 120
+
   
     ----Back sound game super tank
     
@@ -148,7 +149,7 @@ function love.load()
   powerup = require('powerup')
   walls = require('walls')
   
-  font = love.graphics.newFont('whitrabt.ttf')
+  font = love.graphics.newFont('whitrabt.ttf' , 16)
   love.graphics.setFont(font)
   
   gameoverImg = love.graphics.newImage('gameover.png')
@@ -191,12 +192,13 @@ function love.update(dt)
   end
   
   -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
+                                            
   if not gameover then
     if love.keyboard.isDown('left') then
       
       
          if (ship.x+70 < 1160 and ship.x > 340) then
-              if(ship.y+30 > 360 and ship.y-30 < 410 ) then
+              if(ship.y+30 > 360 and ship.y-30 < 410 ) then    --kondisi tembok tidak bisa di lewati
                 ship.x = ship.x - 0
                 ship.left()
               else
@@ -239,7 +241,7 @@ function love.update(dt)
           end
     elseif love.keyboard.isDown('down') then
       
-       --batasan tembok objek tidak bisa lewat jika ke bawah
+                                                      --batasan tembok objek tidak bisa lewat jika ke bawah
       if (ship.y+70 > 360  and ship.y+70 < 410) then
               if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
                     ship.y = ship.y + 0

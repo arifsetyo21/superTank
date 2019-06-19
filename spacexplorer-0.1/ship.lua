@@ -98,14 +98,16 @@ function ship.update(dt)
 end
 
 function ship.draw()
-  if ship.life then
-    love.graphics.draw(exhaust, ship.x - 17, ship.y + 25)
-    love.graphics.draw(exhaust, ship.x + 17, ship.y + 25)
-  end
-  
-  love.graphics.draw(sprite, ship.x, ship.y, ship.r, 1, 1, sprite:getWidth() / 2, sprite:getHeight() / 2 )
+  --if ship.life then
+    --love.graphics.draw(exhaust, ship.x - 17, ship.y + 25) --roket bekas pesawat 
+   -- love.graphics.draw(exhaust, ship.x + 17, ship.y + 25)
+ -- end
+
+  love.graphics.draw(sprite, ship.x, ship.y , ship.r, 1, 1, sprite:getWidth() / 2, sprite:getHeight() / 2 )
   love.graphics.draw(shake)  
   showInfo()
+    
+  
 end
 
 function ship.moveTo(dx, dy)

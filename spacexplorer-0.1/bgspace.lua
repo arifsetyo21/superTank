@@ -1,15 +1,15 @@
 -- bgspace
 
 local bgspace = {}
-local bgspaceImg = love.graphics.newImage('background.jpg')
+local bgspaceImg = love.graphics.newImage('assets/tanah.png')
 
 bgspace.x = 0
 bgspace.y1 = -bgspaceImg:getHeight() + love.graphics.getHeight()
 bgspace.y2 = bgspace.y1 - bgspaceImg:getHeight()
 
 function bgspace.update()
-  bgspace.y1 = bgspace.y1 + 0.5
-  bgspace.y2 = bgspace.y2 + 0.5
+  bgspace.y1 = bgspace.y1
+  bgspace.y2 = bgspace.y2
   
   if bgspace.y1 >= love.graphics.getHeight() then
     bgspace.y1 = bgspace.y2 - bgspaceImg:getHeight()
