@@ -29,6 +29,18 @@ local explosion
 local powerup
 local walls
 
+-- bump.lua
+local world
+local bump
+
+------------
+-- add bump
+------------
+
+-- collision with bump
+local player = { x=50,y=50,w=20,h=20, speed = 80 }
+local cols_len = 0 -- how many collision are happening
+
 -- score and button
 local score
 local hiscore
@@ -149,7 +161,16 @@ function love.load()
   powerup = require('powerup')
   walls = require('walls')
   
+<<<<<<< HEAD
   font = love.graphics.newFont('whitrabt.ttf' , 16)
+=======
+  -- Add bump
+  bump = require('bump')
+  
+  world = bump.newWorld()
+  
+  font = love.graphics.newFont('whitrabt.ttf')
+>>>>>>> 2ed1eead4604c14b2007252d03d720c53b5257ed
   love.graphics.setFont(font)
   
   gameoverImg = love.graphics.newImage('gameover.png')
@@ -161,6 +182,73 @@ function love.load()
   
   bgmusic:play()
   
+  world:add(player, player.x, player.y, player.w, player.h)
+
+  -- addBlock(0,0,800,32)
+  -- addBlock(0,32,32,600-32*2)
+  -- addBlock(800-32,32,32, 600-32*2)
+  -- addBlock(0,600-32,800,32)
+
+  --for i=1,30 do
+  --  addBlock( math.random(100, 600),
+              --math.random(100, 400),
+              --math.random(10, 100),
+              --math.random(10, 100)
+    --)
+  --end
+  
+end
+
+local function updatePlayer(dt)
+  local speed = player.speed
+
+  local dx, dy = 0, 0
+  if love.keyboard.isDown('right') then
+    dx = speed * dt
+  elseif love.keyboard.isDown('left') then
+    dx = -speed * dt
+  end
+  if love.keyboard.isDown('down') then
+    dy = speed * dt
+  elseif love.keyboard.isDown('up') then
+    dy = -speed * dt
+  end
+
+  if dx ~= 0 or dy ~= 0 then
+    local cols
+    player.x, player.y, cols, cols_len = world:move(player, player.x + dx, player.y + dy)
+    for i=1, cols_len do
+      local col = cols[i]
+      consolePrint(("col.other = %s, col.type = %s, col.normal = %d,%d"):format(col.other, col.type, col.normal.x, col.normal.y))
+    end
+  end
+end
+
+local function drawPlayer()
+  drawBox(player, 0, 255, 0)
+end
+
+-- Block functions
+
+local blocks = {}
+
+local function addBlock(x,y,w,h)
+  local block = {x=x,y=y,w=w,h=h}
+  blocks[#blocks+1] = block
+  world:add(block, x,y,w,h)
+end
+
+local function drawBlocks()
+  for _,block in ipairs(blocks) do
+    drawBox(block, 255,0,0)
+  end
+end
+
+local function drawBox(box, r,g,b)
+  love.graphics.setColor(r,g,b,70)
+  love.graphics.rectangle("fill", box.x, box.y, box.w, box.h)
+  love.graphics.setColor(r,g,b)
+  love.graphics.rectangle("line", box.x, box.y, box.w, box.h)
 end
 
 function love.update(dt)
@@ -190,6 +278,10 @@ function love.update(dt)
       powerup.emit(ship.x, ship.y)
     end
   end
+  
+  -- add bump
+  cols_len = 0
+  updatePlayer(dt)
   
   -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
                                             
@@ -314,7 +406,9 @@ function love.draw()
   powerup.draw()
   showHUD()
   
-  
+  drawBlocks()
+  drawPlayer()
+  drawMessage()
 end
 
 function love.mousepressed(x, y, button)
