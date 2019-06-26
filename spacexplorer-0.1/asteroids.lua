@@ -23,8 +23,7 @@ end
 function asteroids.update()
   for i = #asteroids.rocks, 1, -1 do
     asteroids.rocks[i].y = asteroids.rocks[i].y + 1  -- speed musuh
-    asteroids.rocks[i].a = asteroids.rocks[i].a 
-    
+    asteroids.rocks[i].a = asteroids.rocks[i].a     
     if (asteroids.rocks[i].y >= love.graphics.getHeight() + 32) or (not asteroids.rocks[i].life) then
       table.remove(asteroids.rocks, i)
     end
@@ -34,7 +33,7 @@ end
 function asteroids.draw()
   for i = #asteroids.rocks, 1, -1 do
     love.graphics.draw(img, asteroids.rocks[i].x, asteroids.rocks[i].y, asteroids.rocks[i].a, 
-      1, 1, img:getWidth() / 2, img:getHeight() / 2)
+      1, 1, img:getWidth() / 2 , img:getHeight() / 2 )
   end
 end
 

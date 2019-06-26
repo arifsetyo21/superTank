@@ -106,7 +106,6 @@ function ship.draw()
   love.graphics.draw(sprite, ship.x, ship.y , ship.r, 1, 1, sprite:getWidth() / 2, sprite:getHeight() / 2 )
   love.graphics.draw(shake)  
   showInfo()
-    
   
 end
 

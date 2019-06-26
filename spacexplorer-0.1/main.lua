@@ -45,7 +45,7 @@ local function checkCollision()
       local dy = canon.missile[j].y - asteroids.rocks[i].y
       local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
       
-      if d <= 16 then
+      if d <= 39 then
         explosion.emit(asteroids.rocks[i].x, asteroids.rocks[i].y)
         canon.missile[j].life = false
         asteroids.rocks[i].life = false
@@ -213,7 +213,7 @@ function love.update(dt)
               
               -- Kecepatan berjalan ship
               ship.x = ship.x - 2
-              -- Mengubah posisi ship
+              -- Mengubah posisi shipc
               ship.moveTo(ship.x, ship.y)
               -- Menentukan rotasi ship sesuai arahnya
               ship.left()
@@ -302,9 +302,7 @@ end
 
 function love.draw()
   love.graphics.setColor(1, 1, 1, 1)
-  
   bgspace.draw()
-  
   stars.draw()
   walls.draw()
   asteroids.draw()
@@ -314,7 +312,6 @@ function love.draw()
   canister.draw()
   explosion.draw()
   powerup.draw()
-  
   showHUD()
   
   
