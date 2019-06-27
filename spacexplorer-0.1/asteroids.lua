@@ -24,18 +24,37 @@ end
 
 function asteroids.update()
   for i = #asteroids.rocks, 1, -1 do
-    if(asteroids.rocks[i].y < 300 )then -- cek posisi musuh untuk belok
-    asteroids.rocks[i].y = asteroids.rocks[i].y + 1  -- speed musuh
+    
+    if( asteroids.rocks[i].y > 125 and  asteroids.rocks[i].x > 200  and asteroids.rocks[i].x < 300)then -- cek posisi musuh untuk belok
+      
+    asteroids.rocks[i].x = asteroids.rocks[i].x + 1  -- speed musuh
     asteroids.rocks[i].a = asteroids.rocks[i].a 
     
-    elseif(asteroids.rocks[i].x < 300) then  -- pindah ke x jika posisi piksel di 300
+    
+    elseif( asteroids.rocks[i].y > 145 and  asteroids.rocks[i].x > 400  and asteroids.rocks[i].x < 750)then -- cek posisi musuh untuk belok
+      
+    asteroids.rocks[i].x = asteroids.rocks[i].x - 1  -- speed musuh
+    asteroids.rocks[i].a = asteroids.rocks[i].a 
+    
+    
+    
+  elseif(asteroids.rocks[i].y > 155 and  asteroids.rocks[i].x > 500 and asteroids.rocks[i].x < 900 ) then  -- pindah ke x jika posisi piksel di 300
+    
     asteroids.rocks[i].x = asteroids.rocks[i].x + 1
     asteroids.rocks[i].a = asteroids.rocks[i].a 
-     
-   elseif (asteroids.rocks[i].x > 600) then
-     asteroids.rocks[i].x = asteroids.rocks[i].x - 1 -- pindah ke posisi x jika posisi 600
+    
+  elseif(asteroids.rocks[i].y > 650 and asteroids.rocks[i].x > 700) then  -- pindah ke x jika posisi piksel di 300
+    
+    asteroids.rocks[i].x = asteroids.rocks[i].x - 1
     asteroids.rocks[i].a = asteroids.rocks[i].a 
+    
+    elseif(asteroids.rocks[i].y > 650 and asteroids.rocks[i].x < 700) then  -- pindah ke x jika posisi piksel di 300
+    
+    asteroids.rocks[i].x = asteroids.rocks[i].x + 1
+    asteroids.rocks[i].a = asteroids.rocks[i].a      
+     
   else
+    
     asteroids.rocks[i].y = asteroids.rocks[i].y + 1  -- speed musuh
     asteroids.rocks[i].a = asteroids.rocks[i].a 
     

@@ -159,7 +159,7 @@ function love.load()
   hiscore = 0
   gameover = false
   
-  bgmusic:play()
+  --bgmusic:play()
   
 end
 
@@ -241,7 +241,7 @@ function love.update(dt)
           end
     elseif love.keyboard.isDown('down') then
       
-                                                      --batasan tembok objek tidak bisa lewat jika ke bawah
+                                                          --batasan tembok objek tidak bisa lewat jika ke bawah
       if (ship.y+70 > 360  and ship.y+70 < 410) then
               if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
                     ship.y = ship.y + 0
@@ -262,6 +262,7 @@ function love.update(dt)
     elseif love.keyboard.isDown('up') then
       
       -- objek tidak bisa naik ke atas 
+      
              if (ship.y-65 < 410 and ship.y-65 > 360 )then
                     if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
                     ship.y = ship.y - 0
@@ -301,6 +302,7 @@ function love.update(dt)
 end
 
 function love.draw()
+  
   love.graphics.setColor(1, 1, 1, 1)
   
   bgspace.draw()
