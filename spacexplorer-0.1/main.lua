@@ -45,7 +45,7 @@ local function checkCollision()
       local dy = canon.missile[j].y - asteroids.rocks[i].y
       local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
       
-      if d <= 16 then
+      if d <= 30 then
         explosion.emit(asteroids.rocks[i].x, asteroids.rocks[i].y)
         canon.missile[j].life = false
         asteroids.rocks[i].life = false
