@@ -25,11 +25,6 @@ end
 
 
 function asteroids.update()
-  
- 
-  
-  
-  
   for i = #asteroids.rocks, 1, -1 do 
   -- TODO buat arah acak setiap beberapa detik sekali
     if(asteroids.rocks[i].y < 300 )then --  cek posisi musuh untuk belok 
