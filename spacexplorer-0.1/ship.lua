@@ -18,19 +18,19 @@ ship.life = true
 ship.height = height
 ship.width = width
 
-local exhtexture = love.graphics.newImage('exhaust.png')
-local exhaust = love.graphics.newParticleSystem(exhtexture, 500)
-exhaust:setParticleLifetime(0.5, 2)
-exhaust:setEmissionRate(250)
-exhaust:setSizeVariation(1)
-exhaust:setLinearAcceleration(-5, 30, 5, 35)
-exhaust:setColors(1, 1, 0, 1, 1, 0, 0, 0) -- Fade to transparency.
+-- local exhtexture = love.graphics.newImage('exhaust.png')
+-- local exhaust = love.graphics.newParticleSystem(exhtexture, 500)
+-- exhaust:setParticleLifetime(0.5, 2)
+-- exhaust:setEmissionRate(250)
+-- exhaust:setSizeVariation(1)
+-- exhaust:setLinearAcceleration(-5, 30, 5, 35)
+-- exhaust:setColors(1, 1, 0, 1, 1, 0, 0, 0) -- Fade to transparency.
 
-local shake = love.graphics.newParticleSystem(sprite, 5)
-shake:setParticleLifetime(0.5, 2) 
+local shake = love.graphics.newParticleSystem(sprite, 2)
+shake:setParticleLifetime(0.2, 0.5) 
 shake:setLinearAcceleration(-50, -50, 50, 50)
 shake:setSizeVariation(1)
-shake:setColors(1, 1, 1, 0.6, 1, 1, 0, 0)
+shake:setColors(1, 1, 1, 0.6, 1, 0, 0, 0.5)
 
 local function showInfo()
   love.graphics.setColor(1, 1, 1, 1)
@@ -82,6 +82,8 @@ function ship.update(dt)
       speed = 0.01
     else
       ship.life = false
+      ship.x = love.graphics.getWidth() / 2
+      ship.y = love.graphics.getHeight() + 100
     end
   else
     ship.r = ship.r + 0.005
@@ -93,7 +95,7 @@ function ship.update(dt)
   ship.x = ship.x + vx
   ship.y = ship.y + vy
     
-  exhaust:update(dt)
+  -- exhaust:update(dt)
   shake:update(dt)
 end
 
@@ -116,6 +118,7 @@ function ship.moveTo(dx, dy)
 end
 
 function ship.shake()
+  shake:setRotation(ship.r)
   shake:setPosition(ship.x, ship.y)
   shake:emit(5)
 end

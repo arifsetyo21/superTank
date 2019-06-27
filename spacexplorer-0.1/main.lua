@@ -21,6 +21,7 @@ local font
 local ship
 local bgspace 
 local canon
+local ecanon
 local stars
 local asteroids
 local aidkit
@@ -40,7 +41,7 @@ local playImg
 local function checkCollision()
   for i = #asteroids.rocks, 1, -1 do
     for j = #canon.missile, 1, -1 do
-      -- missiles and asteroids
+      -- NOTE missiles and asteroids
       local dx = canon.missile[j].x - asteroids.rocks[i].x
       local dy = canon.missile[j].y - asteroids.rocks[i].y
       local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
@@ -61,7 +62,7 @@ local function checkCollision()
     local wy = walls.y - asteroids.rocks[i].y
     local w = math.sqrt(math.pow(wx, 2) + math.pow(wy, 2))
     
-    -- Check COllision wall and asteroids
+    -- NOTE Check COllision wall and asteroids
     if (CheckCollision(asteroids.rocks[i].x, asteroids.rocks[i].y, 16, 16, walls.x, walls.y, 683, 50)) then
       explosion.emit(asteroids.rocks[i].x, asteroids.rocks[i].y)
       asteroids.rocks[i].life = false
@@ -73,7 +74,7 @@ local function checkCollision()
     end
     
     
-    -- asteroids and ship
+    -- NOTE check collision asteroids and ship
     local dx = asteroids.rocks[i].x - ship.x
     local dy = asteroids.rocks[i].y - ship.y
     local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
@@ -91,6 +92,39 @@ local function checkCollision()
       end
     end
   end
+
+  -- NOTE check collision enemy missile with player/tank
+  for k = #ecanon.missile, 1, -1 do
+    local dx = ecanon.missile[k].x - ship.x
+    local dy = ecanon.missile[k].y - ship.y
+    local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
+
+    -- NOTE check collision if d as trigonometry value under 30
+    if d <= 30 then
+      explosion.emit(ecanon.missile[k].x, ecanon.missile[k].y)
+      ecanon.missile[k].life = false
+      ship.shake()
+      ship.shield = ship.shield - 1
+      if ship.shield == 0 then
+        gameover = true
+        ship.life = false
+        ship.moveTo(ship.x, height + 64)
+      end
+    end
+  end
+
+  for l = #asteroids.rocks, 1, -1 do
+    for m = #asteroids.rocks, 1, -1 do
+      local dx = asteroids.rocks[l].x - asteroids.rocks[m].x
+      local dy = asteroids.rocks[l].y - asteroids.rocks[m].y
+      local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
+      -- FIXME Stuck when enemy out 
+      -- if d <= 10 then
+      --   asteroids.rocks[l].speed = 0
+      -- end
+    end 
+  end
+
 end
 
 -- show score, hi-schore, and shield-bar
@@ -128,12 +162,12 @@ function love.load()
   
     ----Back sound game super tank
     
-      bgmusic = love.audio.newSource('backsound_tank.mp3', 'stream')
-      bgmusic:setLooping(true)
-      bgmusic:setVolume(0.4)
-      engine = love.audio.newSource('tank_idle.mp3', 'stream')
-      engine:setLooping(true)
-      engine:setVolume(0.7)
+  bgmusic = love.audio.newSource('backsound_tank.mp3', 'stream')
+  bgmusic:setLooping(true)
+  bgmusic:setVolume(0.4)
+  engine = love.audio.newSource('tank_idle.mp3', 'stream')
+  engine:setLooping(true)
+  engine:setVolume(0.7)
   
   bgspace = require('bgspace')
   
@@ -141,6 +175,7 @@ function love.load()
   ship.moveTo(centerX, shipAnchorY)
   
   canon = require('canon')
+  ecanon = require('ecanon')
   stars = require('stars')
   asteroids = require('asteroids')
   aidkit = require('aidkit')
@@ -173,7 +208,9 @@ function love.update(dt)
   ship.update(dt)
   canon.update()
   
+  ecanon.update()
   asteroids.update()
+
   explosion.update(dt)
   powerup.update(dt)
   
@@ -290,6 +327,13 @@ function love.update(dt)
     if not gameover then
       if (#canon.missile == 0) then
         canon.fire(ship.x, ship.y, ship.r)
+        for i = #asteroids.rocks, 1, -1 do
+          if asteroids.rocks[i].x == nil then
+          else 
+            -- TODO lakukan tembakan acak setiap beberapa detik, dengan tank yang acak juga
+            ecanon.fire(asteroids.rocks[i].x, asteroids.rocks[i].y, asteroids.rocks[i].r)
+          end
+        end
       end
     end
   -- tambah tombol 'r' untuk reset gameover
@@ -307,9 +351,16 @@ function love.draw()
   
   stars.draw()
   walls.draw()
+
+  -- NOTE gambar musuh dan pelurunya
+  ecanon.draw()
   asteroids.draw()
+
+  -- NOTE gambar player dan pelurunya
   canon.draw()
   ship.draw()
+
+  -- NOTE gambar addons
   aidkit.draw()
   canister.draw()
   explosion.draw()
