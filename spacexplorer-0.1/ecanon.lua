@@ -23,16 +23,16 @@ function ecanon.update()
     -- Cek rotasi tank untuk menentukan rotasi peluru dan arah jalan peluru
     -- peluru arah ke kiri
     if (ecanon.missile[i].r == math.rad(270)) then
-      ecanon.missile[i].x = ecanon.missile[i].x - 25
+      ecanon.missile[i].x = ecanon.missile[i].x - 20
     -- peluru arah ke atas
     elseif (ecanon.missile[i].r == math.rad(0)) then
-      ecanon.missile[i].y = ecanon.missile[i].y - 25
+      ecanon.missile[i].y = ecanon.missile[i].y - 20
     -- peluru arah ke kanan
     elseif (ecanon.missile[i].r == math.rad(90)) then
-      ecanon.missile[i].x = ecanon.missile[i].x + 25
+      ecanon.missile[i].x = ecanon.missile[i].x + 20
     -- peluru arah ke bawah
     elseif (ecanon.missile[i].r == math.rad(180)) then
-      ecanon.missile[i].y = ecanon.missile[i].y + 25
+      ecanon.missile[i].y = ecanon.missile[i].y + 20
     end
     
     -- menghilangkan missile ketika missile sampai pada batas window

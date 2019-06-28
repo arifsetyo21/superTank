@@ -37,10 +37,16 @@ local gameover
 local gameoverImg
 local playImg
 
+-- sqlite db
+local db
+local conn
+
 -- Splash screen
 local o_ten_one = require "libs/o-ten-one"
 local splashy = require 'libs/splashy'
-local menu = 1
+local menu = {}
+menu.splash = 1
+menu.main = 0
 
 -- circular collision detection
 local function checkCollision()
@@ -61,6 +67,11 @@ local function checkCollision()
           hiscore = score 
         end
       end     
+    end
+
+    -- NOTE check if asteroids.rocks.y > love.graphics.getHeight()
+    if(asteroids.rocks[i].y > love.graphics.getHeight() + 5) then
+      asteroids.rocks[i].life = false
     end
     
     local wx = walls.x - asteroids.rocks[i].x
@@ -123,10 +134,7 @@ local function checkCollision()
       local dx = asteroids.rocks[l].x - asteroids.rocks[m].x
       local dy = asteroids.rocks[l].y - asteroids.rocks[m].y
       local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
-      -- FIXME Stuck when enemy out 
-      -- if d <= 10 then
-      --   asteroids.rocks[l].speed = 0
-      -- end
+      
     end 
   end
 
@@ -158,9 +166,9 @@ end
 function love.load()
 
   -- NOTE splash screen load
-  o_ten_one["o-ten-one: rain"] = {module="o-ten-one", {fill="rain"}}
-  splash = o_ten_one()
-  splash.onDone = function() love.draw() end
+  entry = {module="o-ten-one", {fill="lighten"}}
+  splash = o_ten_one(unpack(entry))
+  -- splash.onDone = function()  end
 
   -- NOTE Main menu load
   splashy.addSplash(love.graphics.newImage("assets/mainMenu.jpg"))
@@ -174,8 +182,13 @@ function love.load()
   
   shipAnchorY = centerY + 120
   
+  -- NOTE Main Menu Button
+  btn_play = love.graphics.newImage('assets/button/button_play_1.png')
+  btn_exit = love.graphics.newImage('assets/button/button_exit_1.png')
+  btn_hc = love.graphics.newImage('assets/button/button_high-score_1.png')
+  btn_back = love.graphics.newImage('assets/button/button_back_1.png')
+
   ----Back sound game super tank
-    
   bgmusic = love.audio.newSource('backsound_tank.mp3', 'stream')
   bgmusic:setLooping(true)
   bgmusic:setVolume(0.6)
@@ -212,6 +225,9 @@ function love.load()
   gameover = false
   
   bgmusic:play()
+
+	--I organized this way: "x", "y", "width", "height", "function", "arguments in a table or nil"
+	--I think it's easier to use width and height instead of first x/y and last x/y
   
 end
 
@@ -234,7 +250,7 @@ function love.update(dt)
   
   if ship.fuel <= 0 then
     gameover = true
-    ship.moveTo(ship.x, shipAnchorY + 100)
+    ship.moveTo(ship.x, (shipAnchorY + 400))
   end
   
   if not gameover then
@@ -329,9 +345,6 @@ function love.update(dt)
     else
       engine:stop()
     end
-
-    splash:update(dt)
-    splashy.update(dt)
   end
   
   -- Tambah kodisi ketika gameover tidak bisa eksekusi canon.fire
@@ -339,58 +352,78 @@ function love.update(dt)
     if not gameover then
       if (#canon.missile == 0) then
         canon.fire(ship.x, ship.y, ship.r)
-        for i = #asteroids.rocks, 1, -1 do
-          if asteroids.rocks[i].x == nil then
-          else 
-            -- TODO lakukan tembakan acak setiap beberapa detik, dengan tank yang acak juga
-            --ecanon.fire(asteroids.rocks[i].x, asteroids.rocks[i].y, asteroids.rocks[i].r)
-          end
-        end
       end
     end
   -- tambah tombol 'r' untuk reset gameover
   elseif love.keyboard.isDown('r') and gameover then
     resetGame()
   elseif love.keyboard.isDown('o') then
-    menu = 2
+    menu.splash = 2
     splash:skip()
+  elseif love.keyboard.isDown('t') then
+    menu.splash = 3
+  elseif love.mouse.isDown(1) then
+    if button == 1 and love.mouse.getX() >= love.graphics.getWidth() and love.mouse.getX() <= (love.graphics.getWidth() + 70) and love.mouse.getX() >= (love.graphics.getHeight() / 2) and love.mouse.getY() <= ((love.graphics.getHeight() / 2) + 30) then
+      menu.splash = 3
+    end
   end
     
   fire_tank_musuh() 
+  math.randomseed( os.clock() )
+  interval = math.random(27, 1000)
   
-  interval = math.random(5 , 100)
-  
+  splash:update(dt*0.5)
+  splashy.update(dt*0.01)
 end
 
 function love.draw()
   
-  if(menu == 1) then
+  if( menu.splash == 1) then
     splash:draw()
-  elseif(menu == 2) then
+    love.graphics.print("press 'O' key", (love.graphics.getWidth() / 2) - 100, (love.graphics.getHeight() / 2) + 300, 0, 1.5, 1.5)
+  elseif( menu.splash == 2) then
     drawMenu()
-  else
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(btn_play, (love.graphics.getWidth() / 2) - 110, (love.graphics.getHeight() / 2), 0)
+    love.graphics.draw(btn_hc, (love.graphics.getWidth() / 2) - 150, (love.graphics.getHeight() / 2) + 50, 0)
+    love.graphics.draw(btn_exit, (love.graphics.getWidth() / 2) - 110, (love.graphics.getHeight() / 2) + 100, 0)
+  elseif ( menu.splash == 3 ) then
+    -- splashy.skipAll()
     drawAll()
+  elseif ( menu.splash == 4) then
+    displayHighScore()
+  elseif ( menu.splash == 5) then
+    exit()
   end
+  
 end
 
 
--- function love.mousepressed(x, y, button)
---   if button == 1 then
---     if gameover then
---       local dx = centerX - x
---       local dy = shipAnchorY - y
---       local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
+function love.mousepressed(x, y, button)
+  if button == 1 then
+    if gameover then
+      local dx = centerX - x
+      local dy = shipAnchorY - y
+      local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
       
---       if d <= 24 then
---         resetGame()
---       end
---     else
---       ship.moveTo(x, shipAnchorY)
---       -- canon.fire(ship.x, shipAnchorY, ship.r)
---       canon.fire(ship.x, ship.y, ship.r)
---     end
---   end
--- end
+      if d <= 24 then
+        resetGame()
+      end
+    elseif not gameover then
+      local dx = ((love.graphics.getWidth()/2)-80) - x
+      local dy = (love.graphics.getHeight()/2) - y
+      local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
+      
+      if d <= 30 then
+        menu.splash = 3
+      end
+    -- else
+    --   ship.moveTo(x, shipAnchorY)
+    --   -- canon.fire(ship.x, shipAnchorY, ship.r)
+    --   canon.fire(ship.x, ship.y, ship.r)
+    end
+  end
+end
 
 -- function love.mousemoved(x, y)
 --   if love.mouse.isDown(1) then
@@ -399,6 +432,7 @@ end
 --     end
 --   end
 -- end
+
 
 function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
   return x1 == x2+w2 and
@@ -412,6 +446,7 @@ end
 -- end
 
 function drawAll()
+
   love.graphics.setColor(1, 1, 1, 1)
   bgspace.draw()
   
@@ -443,20 +478,51 @@ function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
 end
 
 function fire_tank_musuh()  
-   for i = #asteroids.rocks, 1, -1 do
-        
-          if asteroids.rocks[i].x == nil then
-          else 
-            -- TODO lakukan tembakan acak setiap beberapa detik, dengan tank yang acak juga
-            if ( interval % 37 == 0) then
-              --if (ecanon.missile[i] == nil) then
-                ecanon.fire(asteroids.rocks[i].x, asteroids.rocks[i].y, asteroids.rocks[i].r)
-                tembak_musuh:play()
-              --
-            end
+  for m = #asteroids.rocks, 1, -1 do
+    
+    if (asteroids.rocks[m] == nil) then 
+    else
+    -- TODO lakukan tembakan acak setiap beberapa detik, dengan tank yang acak juga
+      if( m % 2 == 0) then
+        if ( interval % 23 == 0) then
+          if (ecanon.missile[m] == nil) then
+            ecanon.fire(asteroids.rocks[m].x, asteroids.rocks[m].y, asteroids.rocks[m].r)
+            tembak_musuh:play()
+          -- else
           end
+      -- end
         end
+      elseif (m % 3 == 0) then
+        if ( interval % 24 == 0) then
+          if (ecanon.missile[m] == nil) then
+            ecanon.fire(asteroids.rocks[m].x, asteroids.rocks[m].y, asteroids.rocks[m].r)
+            tembak_musuh:play()
+          -- else
+          end
+        -- end
+        end
+      elseif (m % 7 == 0) then 
+        if ( interval % 35 == 0) then
+          if (ecanon.missile[m] == nil) then
+            ecanon.fire(asteroids.rocks[m].x, asteroids.rocks[m].y, asteroids.rocks[m].r)
+            tembak_musuh:play()
+          -- else
+          end
+      -- end
+        end  
+      end
+    end    
   end
+end
+
 function drawMenu()
   splashy.draw()
+end
+
+function love.keypressed(key)
+  if key == "u" then
+    menu.main = 1
+    resetGame()
+    love.event.push("quit")
+  end
 end
