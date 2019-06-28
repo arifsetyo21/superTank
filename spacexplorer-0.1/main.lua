@@ -183,6 +183,7 @@ function love.load()
   engine:setLooping(true)
   engine:setVolume(0.7)
   tembak_musuh = love.audio.newSource('assets/peluru_musuh.wav', 'stream')
+  tembak_musuh:setVolume(0.9)
   dialog = love.audio.newSource('assets/dialog.mp3', 'stream')
   dialog:setVolume(0.7)
 
@@ -448,7 +449,7 @@ function fire_tank_musuh()
           if asteroids.rocks[i].x == nil then
           else 
             -- TODO lakukan tembakan acak setiap beberapa detik, dengan tank yang acak juga
-            if ( interval % 37 == 0) then
+            if ( interval % 25 == 0) then
               --if (ecanon.missile[i] == nil) then
                 ecanon.fire(asteroids.rocks[i].x, asteroids.rocks[i].y, asteroids.rocks[i].r)
                 tembak_musuh:play()

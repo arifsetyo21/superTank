@@ -17,7 +17,7 @@ end
 
 function canister.update()
   if canister.active then
-    canister.y = canister.y + 1.5
+    canister.y = canister.y + 0.5
     canister.r = canister.r + 0.01
     
     if canister.y > love.graphics.getHeight() + 16 then
