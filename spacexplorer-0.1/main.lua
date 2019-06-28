@@ -212,10 +212,6 @@ function love.load()
   gameover = false
   
   bgmusic:play()
-<<<<<<< HEAD
-
-=======
->>>>>>> 0abdf12fa7f0ff6d7069a44de461f9d8317b197f
   
 end
 
@@ -255,30 +251,6 @@ function love.update(dt)
                                             
   if not gameover then
     if love.keyboard.isDown('left') then
-<<<<<<< HEAD
-  
-         if (ship.x+70 < 1160 and ship.x > 340) then
-              if(ship.y+30 > 360 and ship.y-30 < 410 ) then    --kondisi tembok tidak bisa di lewati
-                ship.x = ship.x - 0
-                ship.left()
-              else
-                ship.x = ship.x - 2
-                ship.moveTo(ship.x, ship.y)
-                ship.left()
-                engine:play()           
-                
-                end
-          else      
-  
-              -- Kecepatan berjalan ship
-              ship.x = ship.x - 2
-              -- Mengubah posisi ship
-              ship.moveTo(ship.x, ship.y)
-              -- Menentukan rotasi ship sesuai arahnya
-              ship.left()
-              -- Memainkan soundFx engine ketika tombol ditekan
-              engine:play()
-=======
       if (ship.x+70 < 1160 and ship.x > 340) then
         if(ship.y+30 > 360 and ship.y-30 < 410 ) then    --kondisi tembok tidak bisa di lewati
           ship.x = ship.x - 0
@@ -298,7 +270,6 @@ function love.update(dt)
         ship.left()
         -- Memainkan soundFx engine ketika tombol ditekan
         engine:play()
->>>>>>> 0abdf12fa7f0ff6d7069a44de461f9d8317b197f
       end
     elseif love.keyboard.isDown('right') then
       
@@ -320,10 +291,6 @@ function love.update(dt)
         engine:play()
       end
     elseif love.keyboard.isDown('down') then
-<<<<<<< HEAD
-
-=======
->>>>>>> 0abdf12fa7f0ff6d7069a44de461f9d8317b197f
       --batasan tembok objek tidak bisa lewat jika ke bawah
       if (ship.y+70 > 360  and ship.y+70 < 410) then
         if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
@@ -468,7 +435,6 @@ function drawAll()
   showHUD()
 end
 
-<<<<<<< HEAD
 function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
   return x1 == x2+w2 and
          x2 == x1+w1 and
@@ -491,8 +457,6 @@ function fire_tank_musuh()
           end
         end
   end
-=======
 function drawMenu()
   splashy.draw()
 end
->>>>>>> 0abdf12fa7f0ff6d7069a44de461f9d8317b197f
