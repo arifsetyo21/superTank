@@ -37,6 +37,11 @@ local gameover
 local gameoverImg
 local playImg
 
+-- Splash screen
+local o_ten_one = require "libs/o-ten-one"
+local splashy = require 'libs/splashy'
+local menu = 1
+
 -- circular collision detection
 local function checkCollision()
   for i = #asteroids.rocks, 1, -1 do
@@ -151,6 +156,16 @@ function resetGame()
 end
 
 function love.load()
+
+  -- NOTE splash screen load
+  o_ten_one["o-ten-one: rain"] = {module="o-ten-one", {fill="rain"}}
+  splash = o_ten_one()
+  splash.onDone = function() love.draw() end
+
+  -- NOTE Main menu load
+  splashy.addSplash(love.graphics.newImage("assets/mainMenu.jpg"))
+  splashy.onComplete(function() drawAll() end)
+
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
   
@@ -158,9 +173,8 @@ function love.load()
   centerY = height / 2
   
   shipAnchorY = centerY + 120
-
   
-    ----Back sound game super tank
+  ----Back sound game super tank
     
   bgmusic = love.audio.newSource('backsound_tank.mp3', 'stream')
   bgmusic:setLooping(true)
@@ -198,11 +212,15 @@ function love.load()
   gameover = false
   
   bgmusic:play()
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0abdf12fa7f0ff6d7069a44de461f9d8317b197f
   
 end
 
 function love.update(dt)
+
   bgspace.update()
   stars.update()
   
@@ -237,6 +255,7 @@ function love.update(dt)
                                             
   if not gameover then
     if love.keyboard.isDown('left') then
+<<<<<<< HEAD
   
          if (ship.x+70 < 1160 and ship.x > 340) then
               if(ship.y+30 > 360 and ship.y-30 < 410 ) then    --kondisi tembok tidak bisa di lewati
@@ -259,72 +278,93 @@ function love.update(dt)
               ship.left()
               -- Memainkan soundFx engine ketika tombol ditekan
               engine:play()
+=======
+      if (ship.x+70 < 1160 and ship.x > 340) then
+        if(ship.y+30 > 360 and ship.y-30 < 410 ) then    --kondisi tembok tidak bisa di lewati
+          ship.x = ship.x - 0
+          ship.left()
+        else
+          ship.x = ship.x - 2
+          ship.moveTo(ship.x, ship.y)
+          ship.left()
+          engine:play()           
+        end
+      else                       
+        -- Kecepatan berjalan ship
+        ship.x = ship.x - 2
+        -- Mengubah posisi ship
+        ship.moveTo(ship.x, ship.y)
+        -- Menentukan rotasi ship sesuai arahnya
+        ship.left()
+        -- Memainkan soundFx engine ketika tombol ditekan
+        engine:play()
+>>>>>>> 0abdf12fa7f0ff6d7069a44de461f9d8317b197f
       end
     elseif love.keyboard.isDown('right') then
       
       --batasan tembok objek tidak bisa lewat jikake atas
-          if (ship.x+70 < 1160  and ship.x > 340) then
-              if(ship.y+30 > 360 and ship.y-30 < 410 ) then
-                ship.x = ship.x + 0
-                ship.right()
-              else
-                ship.x = ship.x + 2
-                ship.moveTo(ship.x, ship.y)
-                ship.right()
-                engine:play()           
-                
-                end
-          else
-            ship.x = ship.x + 2
-            ship.moveTo(ship.x, ship.y)
-            ship.right()
-            engine:play()
-          end
+      if (ship.x+70 < 1160  and ship.x > 340) then
+        if(ship.y+30 > 360 and ship.y-30 < 410 ) then
+          ship.x = ship.x + 0
+          ship.right()
+        else
+          ship.x = ship.x + 2
+          ship.moveTo(ship.x, ship.y)
+          ship.right()
+          engine:play()           
+        end
+      else
+        ship.x = ship.x + 2
+        ship.moveTo(ship.x, ship.y)
+        ship.right()
+        engine:play()
+      end
     elseif love.keyboard.isDown('down') then
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0abdf12fa7f0ff6d7069a44de461f9d8317b197f
       --batasan tembok objek tidak bisa lewat jika ke bawah
       if (ship.y+70 > 360  and ship.y+70 < 410) then
-              if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
-                    ship.y = ship.y + 0
-                    ship.down()
-                else
-                    ship.y = ship.y + 2
-                    ship.moveTo(ship.x, ship.y)
-                    ship.down()
-                    engine:play()          
-                
-              end
+        if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
+            ship.y = ship.y + 0
+            ship.down()
+          else
+            ship.y = ship.y + 2
+            ship.moveTo(ship.x, ship.y)
+            ship.down()
+            engine:play()          
+        end
       else
         ship.y = ship.y + 2
         ship.moveTo(ship.x, ship.y)
         ship.down()
         engine:play()
       end
-    elseif love.keyboard.isDown('up') then
-      
-      -- objek tidak bisa naik ke atas 
-      
-             if (ship.y-65 < 410 and ship.y-65 > 360 )then
-                    if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
-                    ship.y = ship.y - 0
-                    ship.up()
-                else
-                  ship.y = ship.y - 2
-                  ship.moveTo(ship.x, ship.y)
-                  ship.up()
-                  engine:play()
-                end
-            else     
-            
-                ship.y = ship.y - 2
-                ship.moveTo(ship.x, ship.y)
-                ship.up()
-                engine:play()
-            end
+    elseif love.keyboard.isDown('up') then  
+    -- objek tidak bisa naik ke atas 
+      if (ship.y-65 < 410 and ship.y-65 > 360 )then
+        if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
+          ship.y = ship.y - 0
+          ship.up()
+        else
+          ship.y = ship.y - 2
+          ship.moveTo(ship.x, ship.y)
+          ship.up()
+          engine:play()
+        end
+      else     
+        ship.y = ship.y - 2
+        ship.moveTo(ship.x, ship.y)
+        ship.up()
+        engine:play()
+      end
     else
       engine:stop()
     end
 
+    splash:update(dt)
+    splashy.update(dt)
   end
   
   -- Tambah kodisi ketika gameover tidak bisa eksekusi canon.fire
@@ -344,6 +384,9 @@ function love.update(dt)
   -- tambah tombol 'r' untuk reset gameover
   elseif love.keyboard.isDown('r') and gameover then
     resetGame()
+  elseif love.keyboard.isDown('o') then
+    menu = menu + 1
+    splash:skip()
   end
     
   fire_tank_musuh() 
@@ -354,8 +397,55 @@ end
 
 function love.draw()
   
-  love.graphics.setColor(1, 1, 1, 1)
+  if(menu == 1) then
+    splash:draw()
+  elseif(menu == 2) then
+    drawMenu()
+  else
+    drawAll()
+  end
+end
+
+
+-- function love.mousepressed(x, y, button)
+--   if button == 1 then
+--     if gameover then
+--       local dx = centerX - x
+--       local dy = shipAnchorY - y
+--       local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
+      
+--       if d <= 24 then
+--         resetGame()
+--       end
+--     else
+--       ship.moveTo(x, shipAnchorY)
+--       -- canon.fire(ship.x, shipAnchorY, ship.r)
+--       canon.fire(ship.x, ship.y, ship.r)
+--     end
+--   end
+-- end
+
+-- function love.mousemoved(x, y)
+--   if love.mouse.isDown(1) then
+--     if not gameover then
+--       ship.moveTo(x, shipAnchorY)
+--     end
+--   end
+-- end
+
+function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+  return x1 == x2+w2 and
+         x2 == x1+w1 and
+         y1 == y2+h2 and
+         y2 == y1+h1
+end
+
+-- function love.keypressed()
   
+-- end
+
+function drawAll()
+  love.graphics.setColor(1, 1, 1, 1)
   bgspace.draw()
   
   stars.draw()
@@ -374,38 +464,11 @@ function love.draw()
   canister.draw()
   explosion.draw()
   powerup.draw()
-  
+
   showHUD()
-  
-  
 end
 
-function love.mousepressed(x, y, button)
-  if button == 1 then
-    if gameover then
-      local dx = centerX - x
-      local dy = shipAnchorY - y
-      local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
-      
-      if d <= 24 then
-        resetGame()
-      end
-    else
-      ship.moveTo(x, shipAnchorY)
-      -- canon.fire(ship.x, shipAnchorY, ship.r)
-      canon.fire(ship.x, ship.y, ship.r)
-    end
-  end
-end
-
-function love.mousemoved(x, y)
-  if love.mouse.isDown(1) then
-    if not gameover then
-      ship.moveTo(x, shipAnchorY)
-    end
-  end
-end
-
+<<<<<<< HEAD
 function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
   return x1 == x2+w2 and
          x2 == x1+w1 and
@@ -428,3 +491,8 @@ function fire_tank_musuh()
           end
         end
   end
+=======
+function drawMenu()
+  splashy.draw()
+end
+>>>>>>> 0abdf12fa7f0ff6d7069a44de461f9d8317b197f
