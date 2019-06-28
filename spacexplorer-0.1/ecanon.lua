@@ -4,7 +4,6 @@
 local ecanon = {}
 
 local sprite = love.graphics.newImage('missile.png')
-local sound = love.audio.newSource('assets/s5.mp3', 'static')
 
 ecanon.missile = {}
 local rot
@@ -15,8 +14,7 @@ function ecanon.fire(x, y, rad)
   m.y = y
   m.r = rad
   m.life = true
-  table.insert(ecanon.missile, m)
-  sound:play()
+  table.insert(ecanon.missile, m)  
 end
 
 function ecanon.update()

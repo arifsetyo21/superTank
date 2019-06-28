@@ -178,11 +178,14 @@ function love.load()
     
   bgmusic = love.audio.newSource('backsound_tank.mp3', 'stream')
   bgmusic:setLooping(true)
-  bgmusic:setVolume(0.4)
+  bgmusic:setVolume(0.6)
   engine = love.audio.newSource('tank_idle.mp3', 'stream')
   engine:setLooping(true)
   engine:setVolume(0.7)
-  
+  tembak_musuh = love.audio.newSource('assets/peluru_musuh.wav', 'stream')
+  dialog = love.audio.newSource('assets/dialog.mp3', 'stream')
+  dialog:setVolume(0.7)
+
   bgspace = require('bgspace')
   
   ship = require('ship')
@@ -243,6 +246,7 @@ function love.update(dt)
     end
   end
   
+  dialog:play()
   -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
                                             
   if not gameover then
@@ -268,6 +272,7 @@ function love.update(dt)
         engine:play()
       end
     elseif love.keyboard.isDown('right') then
+      
       --batasan tembok objek tidak bisa lewat jikake atas
       if (ship.x+70 < 1160  and ship.x > 340) then
         if(ship.y+30 > 360 and ship.y-30 < 410 ) then
@@ -338,7 +343,7 @@ function love.update(dt)
           if asteroids.rocks[i].x == nil then
           else 
             -- TODO lakukan tembakan acak setiap beberapa detik, dengan tank yang acak juga
-            ecanon.fire(asteroids.rocks[i].x, asteroids.rocks[i].y, asteroids.rocks[i].r)
+            --ecanon.fire(asteroids.rocks[i].x, asteroids.rocks[i].y, asteroids.rocks[i].r)
           end
         end
       end
@@ -351,6 +356,9 @@ function love.update(dt)
     splash:skip()
   end
     
+  fire_tank_musuh() 
+  
+  interval = math.random(5 , 100)
   
 end
 
@@ -427,6 +435,28 @@ function drawAll()
   showHUD()
 end
 
+function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+  return x1 == x2+w2 and
+         x2 == x1+w1 and
+         y1 == y2+h2 and
+         y2 == y1+h1
+end
+
+function fire_tank_musuh()  
+   for i = #asteroids.rocks, 1, -1 do
+        
+          if asteroids.rocks[i].x == nil then
+          else 
+            -- TODO lakukan tembakan acak setiap beberapa detik, dengan tank yang acak juga
+            if ( interval % 37 == 0) then
+              --if (ecanon.missile[i] == nil) then
+                ecanon.fire(asteroids.rocks[i].x, asteroids.rocks[i].y, asteroids.rocks[i].r)
+                tembak_musuh:play()
+              --
+            end
+          end
+        end
+  end
 function drawMenu()
   splashy.draw()
 end

@@ -3,12 +3,13 @@
 local asteroids = {}
 local img = love.graphics.newImage('assets/musuh.png')
 local et = 0
+waktu = math.random(1 ,3)
 
 asteroids.rocks = {}
 
 function asteroids.create(dt)
   et = et + dt
-  if et >= 2 then -- create asteroid, tiap 2 detik
+  if et >=  waktu then -- create asteroid, tiap 2 detik
     local r = {}
     r.x = math.random(10, love.graphics.getWidth() - 10)
     r.y = math.random(-30, -15)
@@ -25,6 +26,7 @@ end
 
 
 function asteroids.update()
+  
   for i = #asteroids.rocks, 1, -1 do 
   -- TODO buat arah acak setiap beberapa detik sekali
     if(asteroids.rocks[i].y < 300 )then --  cek posisi musuh untuk belok 
@@ -58,9 +60,7 @@ function asteroids.update()
     end
      end
         
-end
-    
-  
+end  
 
 function asteroids.draw()
   for i = #asteroids.rocks, 1, -1 do
