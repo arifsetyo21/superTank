@@ -347,7 +347,7 @@ function love.update(dt)
   elseif love.keyboard.isDown('r') and gameover then
     resetGame()
   elseif love.keyboard.isDown('o') then
-    menu = menu + 1
+    menu = 2
     splash:skip()
   end
     
