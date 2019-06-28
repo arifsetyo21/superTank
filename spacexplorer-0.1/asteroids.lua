@@ -24,7 +24,6 @@ function asteroids.create(dt)
 end
 
 
-
 function asteroids.update()
   
   for i = #asteroids.rocks, 1, -1 do 

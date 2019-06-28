@@ -196,6 +196,7 @@ function love.load()
   engine:setLooping(true)
   engine:setVolume(0.7)
   tembak_musuh = love.audio.newSource('assets/peluru_musuh.wav', 'stream')
+  tembak_musuh:setVolume(0.9)
   dialog = love.audio.newSource('assets/dialog.mp3', 'stream')
   dialog:setVolume(0.7)
 

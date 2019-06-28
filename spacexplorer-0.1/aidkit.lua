@@ -18,7 +18,7 @@ end
 
 function aidkit.update()
   if aidkit.active then
-    aidkit.y = aidkit.y + 1.5
+    aidkit.y = aidkit.y + 0.5
     aidkit.r = aidkit.r + 0.01
     
     if aidkit.y > love.graphics.getHeight() + 16 then
