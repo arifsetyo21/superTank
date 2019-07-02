@@ -37,6 +37,8 @@ local gameover
 local gameoverImg
 local playImg
 local raja
+local pause = {}
+local pauseImg
 
 -- sqlite db
 local db
@@ -155,6 +157,16 @@ local function showHUD()
   end
 end
 
+-- add pause feature
+function pauseFunc()
+  pause.value = pause.value + 1
+  if pause.value % 2 == 0 then
+    pause.is = false
+  else
+    pause.is = true
+  end
+end
+
 function resetGame()
   gameover = false
   score = 0
@@ -188,6 +200,7 @@ function love.load()
   btn_exit = love.graphics.newImage('assets/button/button_exit_1.png')
   btn_hc = love.graphics.newImage('assets/button/button_high-score_1.png')
   btn_back = love.graphics.newImage('assets/button/button_back_1.png')
+  pauseImg = love.graphics.newImage('assets/button/white_pause.png')
 
   ----Back sound game super tank
   bgmusic = love.audio.newSource('backsound_tank.mp3', 'stream')
@@ -223,6 +236,7 @@ function love.load()
   playImg = love.graphics.newImage('play.png')
   raja = love.graphics.newImage('assets/zelda.png')
   
+  pause.value = 0
   score = 0
   hiscore = 0
   gameover = false
@@ -234,17 +248,21 @@ end
 
 function love.update(dt)
 
-  bgspace.update()
-  stars.update()
+  if not gameover then
+    if not pause.is then
+      bgspace.update()
+      stars.update()
+      
+      aidkit.update()
+      canister.update()
+      
+      ship.update(dt)
+      canon.update()
   
-  aidkit.update()
-  canister.update()
-  
-  ship.update(dt)
-  canon.update()
-  
-  ecanon.update()
-  asteroids.update()
+      ecanon.update()
+      asteroids.update()  
+    end
+  end
 
   explosion.update(dt)
   powerup.update(dt)
@@ -269,44 +287,48 @@ function love.update(dt)
     -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
                                               
     if not gameover then
-      if love.keyboard.isDown('left') then
-        -- Kecepatan berjalan ship
-        ship.x = ship.x - 2
-        -- Mengubah posisi ship
-        ship.moveTo(ship.x, ship.y)
-        -- Menentukan rotasi ship sesuai arahnya
-        ship.left()
-        -- Memainkan soundFx engine ketika tombol ditekan
-        engine:play()
-      elseif love.keyboard.isDown('right') then
-        
-        --batasan tembok objek tidak bisa lewat jikake atas
-        ship.x = ship.x + 2
-        ship.moveTo(ship.x, ship.y)
-        ship.right()
-        engine:play()
-      elseif love.keyboard.isDown('down') then
-        --batasan tembok objek tidak bisa lewat jika ke bawah
-        ship.y = ship.y + 2
-        ship.moveTo(ship.x, ship.y)
-        ship.down()
-        engine:play()
-      elseif love.keyboard.isDown('up') then  
-        -- objek tidak bisa naik ke atas 
-        ship.y = ship.y - 2
-        ship.moveTo(ship.x, ship.y)
-        ship.up()
-        engine:play()        
-      else
-        engine:stop()
+      if not pause.is then
+        if love.keyboard.isDown('left') then
+          -- Kecepatan berjalan ship
+          ship.x = ship.x - 2
+          -- Mengubah posisi ship
+          ship.moveTo(ship.x, ship.y)
+          -- Menentukan rotasi ship sesuai arahnya
+          ship.left()
+          -- Memainkan soundFx engine ketika tombol ditekan
+          engine:play()
+        elseif love.keyboard.isDown('right') then
+          
+          --batasan tembok objek tidak bisa lewat jikake atas
+          ship.x = ship.x + 2
+          ship.moveTo(ship.x, ship.y)
+          ship.right()
+          engine:play()
+        elseif love.keyboard.isDown('down') then
+          --batasan tembok objek tidak bisa lewat jika ke bawah
+          ship.y = ship.y + 2
+          ship.moveTo(ship.x, ship.y)
+          ship.down()
+          engine:play()
+        elseif love.keyboard.isDown('up') then  
+          -- objek tidak bisa naik ke atas 
+          ship.y = ship.y - 2
+          ship.moveTo(ship.x, ship.y)
+          ship.up()
+          engine:play()        
+        else
+          engine:stop()
+        end
       end
     end
     
     -- Tambah kodisi ketika gameover tidak bisa eksekusi canon.fire
     if love.keyboard.isDown('a') then    
       if not gameover then
-        if (#canon.missile == 0) then
-          canon.fire(ship.x, ship.y, ship.r)
+        if not pause.is then
+          if (#canon.missile == 0) then
+            canon.fire(ship.x, ship.y, ship.r)
+          end
         end
       end
     -- tambah tombol 'r' untuk reset gameover
@@ -315,8 +337,8 @@ function love.update(dt)
     elseif love.keyboard.isDown('o') then
       menu.splash = 2
       splash:skip()
-    elseif love.keyboard.isDown('t') then
-      menu.splash = 3
+    elseif love.keyboard.isDown('p') then
+      pauseFunc()
     end
   end
 
@@ -347,6 +369,10 @@ function love.draw()
   elseif ( menu.splash == 3 ) then
     -- splashy.skipAll()
     drawAll()
+    if pause.is then
+      love.graphics.setColor(1,1,1,1)
+      love.graphics.draw(pauseImg, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2, 0, 1, 1)
+    end
   elseif ( menu.splash == 4) then
     displayHighScore()
   elseif ( menu.splash == 5) then
