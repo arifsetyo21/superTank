@@ -77,7 +77,7 @@ end
 function ship.update(dt)
   if ship.life then
     if ship.fuel > 0 then
-      ship.fuel = ship.fuel - 0.01
+      ship.fuel = ship.fuel - 0.007
     elseif ship.fuel > 10 then
       speed = 0.01
     else

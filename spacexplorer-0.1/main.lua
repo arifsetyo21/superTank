@@ -69,25 +69,25 @@ local function checkCollision()
       end     
     end
 
-    -- NOTE check if asteroids.rocks.y > love.graphics.getHeight()
-    if(asteroids.rocks[i].y > love.graphics.getHeight() + 5) then
-      asteroids.rocks[i].life = false
-    end
+    -- -- NOTE check if asteroids.rocks.y > love.graphics.getHeight()
+    -- if(asteroids.rocks[i].y > love.graphics.getHeight() + 5) then
+    --   asteroids.rocks[i].life = false
+    -- end
     
-    local wx = walls.x - asteroids.rocks[i].x
-    local wy = walls.y - asteroids.rocks[i].y
-    local w = math.sqrt(math.pow(wx, 2) + math.pow(wy, 2))
+    -- local wx = walls.x - asteroids.rocks[i].x
+    -- local wy = walls.y - asteroids.rocks[i].y
+    -- local w = math.sqrt(math.pow(wx, 2) + math.pow(wy, 2))
     
     -- NOTE Check COllision wall and asteroids
-    if (CheckCollision(asteroids.rocks[i].x, asteroids.rocks[i].y, 16, 16, walls.x, walls.y, 683, 50)) then
-      explosion.emit(asteroids.rocks[i].x, asteroids.rocks[i].y)
-      asteroids.rocks[i].life = false
-    end
+    -- if (CheckCollision(asteroids.rocks[i].x, asteroids.rocks[i].y, 16, 16, walls.x, walls.y, 683, 50)) then
+    --   explosion.emit(asteroids.rocks[i].x, asteroids.rocks[i].y)
+    --   asteroids.rocks[i].life = false
+    -- end
     
-    if (CheckCollision(ship.x, ship.y, ship.width, ship.height, walls.x, walls.y, 683, 50 )) then
-      ship.x = ship.x + 0
-      ship.y = ship.y + 0
-    end
+    -- if (CheckCollision(ship.x, ship.y, ship.width, ship.height, walls.x, walls.y, 683, 50 )) then
+    --   ship.x = ship.x + 0
+    --   ship.y = ship.y + 0
+    -- end
     
     
     -- NOTE check collision asteroids and ship
@@ -224,8 +224,6 @@ function love.load()
   score = 0
   hiscore = 0
   gameover = false
-  
-  bgmusic:play()
 
 	--I organized this way: "x", "y", "width", "height", "function", "arguments in a table or nil"
 	--I think it's easier to use width and height instead of first x/y and last x/y
@@ -249,36 +247,27 @@ function love.update(dt)
   explosion.update(dt)
   powerup.update(dt)
   
-  if ship.fuel <= 0 then
-    gameover = true
-    ship.moveTo(ship.x, (shipAnchorY + 400))
-  end
-  
-  if not gameover then
-    asteroids.create(dt)  
-    checkCollision()
-    
-    if aidkit.heal(ship) or canister.fill(ship) then
-      powerup.emit(ship.x, ship.y)
+  if menu.splash == 3 then
+    if ship.fuel <= 0 then
+      gameover = true
+      ship.moveTo(ship.x, (shipAnchorY + 400))
     end
-  end
-  
-  dialog:play()
-  -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
-                                            
-  if not gameover then
-    if love.keyboard.isDown('left') then
-      if (ship.x+70 < 1160 and ship.x > 340) then
-        if(ship.y+30 > 360 and ship.y-30 < 410 ) then    --kondisi tembok tidak bisa di lewati
-          ship.x = ship.x - 0
-          ship.left()
-        else
-          ship.x = ship.x - 2
-          ship.moveTo(ship.x, ship.y)
-          ship.left()
-          engine:play()           
-        end
-      else                       
+    
+    if not gameover then
+      asteroids.create(dt)
+      fire_tank_musuh() 
+      checkCollision()
+      
+      if aidkit.heal(ship) or canister.fill(ship) then
+        powerup.emit(ship.x, ship.y)
+      end
+    end
+    
+    dialog:play()
+    -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
+                                              
+    if not gameover then
+      if love.keyboard.isDown('left') then
         -- Kecepatan berjalan ship
         ship.x = ship.x - 2
         -- Mengubah posisi ship
@@ -287,89 +276,53 @@ function love.update(dt)
         ship.left()
         -- Memainkan soundFx engine ketika tombol ditekan
         engine:play()
-      end
-    elseif love.keyboard.isDown('right') then
-      
-      --batasan tembok objek tidak bisa lewat jikake atas
-      if (ship.x+70 < 1160  and ship.x > 340) then
-        if(ship.y+30 > 360 and ship.y-30 < 410 ) then
-          ship.x = ship.x + 0
-          ship.right()
-        else
-          ship.x = ship.x + 2
-          ship.moveTo(ship.x, ship.y)
-          ship.right()
-          engine:play()           
-        end
-      else
+      elseif love.keyboard.isDown('right') then
+        
+        --batasan tembok objek tidak bisa lewat jikake atas
         ship.x = ship.x + 2
         ship.moveTo(ship.x, ship.y)
         ship.right()
         engine:play()
-      end
-    elseif love.keyboard.isDown('down') then
-      --batasan tembok objek tidak bisa lewat jika ke bawah
-      if (ship.y+70 > 360  and ship.y+70 < 410) then
-        if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
-            ship.y = ship.y + 0
-            ship.down()
-          else
-            ship.y = ship.y + 2
-            ship.moveTo(ship.x, ship.y)
-            ship.down()
-            engine:play()          
-        end
-      else
+      elseif love.keyboard.isDown('down') then
+        --batasan tembok objek tidak bisa lewat jika ke bawah
         ship.y = ship.y + 2
         ship.moveTo(ship.x, ship.y)
         ship.down()
         engine:play()
-      end
-    elseif love.keyboard.isDown('up') then  
-    -- objek tidak bisa naik ke atas 
-      if (ship.y-65 < 410 and ship.y-65 > 360 )then
-        if(ship.x+30 > 341 and ship.x-30 < 1024 ) then
-          ship.y = ship.y - 0
-          ship.up()
-        else
-          ship.y = ship.y - 2
-          ship.moveTo(ship.x, ship.y)
-          ship.up()
-          engine:play()
-        end
-      else     
+      elseif love.keyboard.isDown('up') then  
+        -- objek tidak bisa naik ke atas 
         ship.y = ship.y - 2
         ship.moveTo(ship.x, ship.y)
         ship.up()
-        engine:play()
-      end
-    else
-      engine:stop()
-    end
-  end
-  
-  -- Tambah kodisi ketika gameover tidak bisa eksekusi canon.fire
-  if love.keyboard.isDown('a') then    
-    if not gameover then
-      if (#canon.missile == 0) then
-        canon.fire(ship.x, ship.y, ship.r)
+        engine:play()        
+      else
+        engine:stop()
       end
     end
-  -- tambah tombol 'r' untuk reset gameover
-  elseif love.keyboard.isDown('r') and gameover then
-    resetGame()
-  elseif love.keyboard.isDown('o') then
-    menu.splash = 2
-    splash:skip()
-  elseif love.keyboard.isDown('t') then
-    menu.splash = 3
-  elseif love.mouse.isDown(1) then
-    if button == 1 and love.mouse.getX() >= love.graphics.getWidth() and love.mouse.getX() <= (love.graphics.getWidth() + 70) and love.mouse.getX() >= (love.graphics.getHeight() / 2) and love.mouse.getY() <= ((love.graphics.getHeight() / 2) + 30) then
+    
+    -- Tambah kodisi ketika gameover tidak bisa eksekusi canon.fire
+    if love.keyboard.isDown('a') then    
+      if not gameover then
+        if (#canon.missile == 0) then
+          canon.fire(ship.x, ship.y, ship.r)
+        end
+      end
+    -- tambah tombol 'r' untuk reset gameover
+    elseif love.keyboard.isDown('r') and gameover then
+      resetGame()
+    elseif love.keyboard.isDown('o') then
+      menu.splash = 2
+      splash:skip()
+    elseif love.keyboard.isDown('t') then
       menu.splash = 3
     end
   end
+
+  if love.keyboard.isDown('o') and menu.splash == 1 then 
+    menu.splash = 2
+    splash:skip()
+  end
     
-  fire_tank_musuh() 
   math.randomseed( os.clock() )
   interval = math.random(27, 1000)
   
@@ -384,6 +337,7 @@ function love.draw()
     love.graphics.print("press 'O' key", (love.graphics.getWidth() / 2) - 100, (love.graphics.getHeight() / 2) + 300, 0, 1.5, 1.5)
   elseif( menu.splash == 2) then
     drawMenu()
+    bgmusic:play()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(btn_play, (love.graphics.getWidth() / 2) - 110, (love.graphics.getHeight() / 2), 0)
     love.graphics.draw(btn_hc, (love.graphics.getWidth() / 2) - 150, (love.graphics.getHeight() / 2) + 50, 0)
@@ -396,9 +350,7 @@ function love.draw()
   elseif ( menu.splash == 5) then
     exit()
   end
-  
 end
-
 
 function love.mousepressed(x, y, button)
   if button == 1 then
@@ -435,12 +387,7 @@ end
 -- end
 
 
-function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
-  return x1 == x2+w2 and
-         x2 == x1+w1 and
-         y1 == y2+h2 and
-         y2 == y1+h1
-end
+-- S
 
 -- function love.keypressed()
   
@@ -471,12 +418,12 @@ function drawAll()
   showHUD()
 end
 
-function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
-  return x1 == x2+w2 and
-         x2 == x1+w1 and
-         y1 == y2+h2 and
-         y2 == y1+h1
-end
+-- function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
+--   return x1 == x2+w2 and
+--          x2 == x1+w1 and
+--          y1 == y2+h2 and
+--          y2 == y1+h1
+-- end
 
 function fire_tank_musuh()  
   for m = #asteroids.rocks, 1, -1 do
@@ -485,7 +432,7 @@ function fire_tank_musuh()
     else
     -- TODO lakukan tembakan acak setiap beberapa detik, dengan tank yang acak juga
       if( m % 2 == 0) then
-        if ( interval % 23 == 0) then
+        if ( interval % 20 == 0) then
           if (ecanon.missile[m] == nil) then
             ecanon.fire(asteroids.rocks[m].x, asteroids.rocks[m].y, asteroids.rocks[m].r)
             tembak_musuh:play()
@@ -494,7 +441,7 @@ function fire_tank_musuh()
       -- end
         end
       elseif (m % 3 == 0) then
-        if ( interval % 24 == 0) then
+        if ( interval % 21 == 0) then
           if (ecanon.missile[m] == nil) then
             ecanon.fire(asteroids.rocks[m].x, asteroids.rocks[m].y, asteroids.rocks[m].r)
             tembak_musuh:play()
@@ -503,14 +450,21 @@ function fire_tank_musuh()
         -- end
         end
       elseif (m % 7 == 0) then 
-        if ( interval % 35 == 0) then
+        if ( interval % 22 == 0) then
           if (ecanon.missile[m] == nil) then
             ecanon.fire(asteroids.rocks[m].x, asteroids.rocks[m].y, asteroids.rocks[m].r)
-            tembak_musuh:play()
-          -- else
+            tembak_musuh:play()          
           end
-      -- end
         end  
+      else
+        if (m == 1) then
+          if ( interval % 23 == 0) then
+            if (ecanon.missile[m] == nil) then
+              ecanon.fire(asteroids.rocks[m].x, asteroids.rocks[m].y, asteroids.rocks[m].r)
+              tembak_musuh:play()            
+            end
+          end
+        end
       end
     end    
   end

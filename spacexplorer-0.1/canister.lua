@@ -4,20 +4,20 @@ local canister = {}
 
 local image = love.graphics.newImage('canister.png')
 canister.x = math.random(64, love.graphics.getWidth() - 64)
-canister.y = -250
+canister.y = -150
 canister.r = 0
 canister.active = false
 
 function canister.reset()
   canister.x = math.random(64, love.graphics.getWidth() - 64)
-  canister.y = -250
+  canister.y = -150
   canister.r = 0
   canister.active = false
 end
 
 function canister.update()
   if canister.active then
-    canister.y = canister.y + 0.5
+    canister.y = canister.y + 0.8
     canister.r = canister.r + 0.01
     
     if canister.y > love.graphics.getHeight() + 16 then
@@ -33,7 +33,7 @@ function canister.draw()
 end
 
 function canister.fill(ship)
-  if ship.fuel < 14 then
+  if ship.fuel < 20 then
     if not canister.active then
       canister.active = true
       return false
