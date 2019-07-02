@@ -36,6 +36,7 @@ local hiscore
 local gameover
 local gameoverImg
 local playImg
+local raja
 
 -- sqlite db
 local db
@@ -220,6 +221,7 @@ function love.load()
   
   gameoverImg = love.graphics.newImage('gameover.png')
   playImg = love.graphics.newImage('play.png')
+  raja = love.graphics.newImage('assets/zelda.png')
   
   score = 0
   hiscore = 0
@@ -352,6 +354,13 @@ function love.draw()
   end
 end
 
+
+function raja_tampil()
+  
+  love.graphics.draw(raja, 650 , 650 , rotation , -1 ,1)
+  
+end
+
 function love.mousepressed(x, y, button)
   if button == 1 then
     if gameover then
@@ -414,6 +423,8 @@ function drawAll()
   canister.draw()
   explosion.draw()
   powerup.draw()
+  
+  raja_tampil()
 
   showHUD()
 end
