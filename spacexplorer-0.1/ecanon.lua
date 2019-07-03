@@ -49,6 +49,10 @@ function ecanon.update()
   end
 end
 
+function ecanon.reset()
+  ecanon.missile = {}
+end
+
 function ecanon.draw()
   -- perulangan untuk menggambarkan ecanon
   for i = 1, #ecanon.missile do

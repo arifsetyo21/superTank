@@ -68,6 +68,10 @@ function asteroids.draw()
   end
 end
 
+function asteroids.reset()
+  asteroids.rocks = {}
+end
+
 function asteroids.movement( i, key)
   if(key == 'down') then
     asteroids.rocks[i].y = asteroids.rocks[i].y + asteroids.rocks[i].speed  -- speed musuh

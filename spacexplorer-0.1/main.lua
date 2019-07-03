@@ -22,7 +22,7 @@ local ship
 local bgspace 
 local canon
 local ecanon
-local stars
+-- local stars
 local asteroids
 local aidkit
 local canister
@@ -119,7 +119,7 @@ local function checkCollision()
     local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
 
     -- NOTE check collision if d as trigonometry value under 30
-    if d <= 30 then
+    if d <= 64 then
       explosion.emit(ecanon.missile[k].x, ecanon.missile[k].y)
       ecanon.missile[k].life = false
       ship.shake()
@@ -130,16 +130,43 @@ local function checkCollision()
         ship.moveTo(ship.x, height + 64)
       end
     end
+
+    local ex = ecanon.missile[k].x - raja.x
+    local ey = ecanon.missile[k].y - raja.y
+    local e = math.sqrt(math.pow(ex, 2) + math.pow(ey, 2))
+
+    if e <= 64 then
+      explosion.emit(ecanon.missile[k].x, ecanon.missile[k].y)
+      ecanon.missile[k].life = false
+      raja.shake()
+      raja.shield = raja.shield - 1
+      if raja.shield == 0 then
+        gameover = true
+        ship.life = false
+        ship.moveTo(ship.x, height + 64)
+      end
+    end
+
+    for yWall = 1, #walls do
+      for xWall = 1, #walls[yWall] do
+        if walls[yWall][xWall] == 1 then
+            if ecanon.missile[k].y >= (yWall-1) * 72 and (ecanon.missile[k].x <= 220 or ecanon.missile[k].x >= 790) then
+              explosion.emit(ecanon.missile[k].x, ecanon.missile[k].y)
+            ecanon.missile[k].life = false
+          end
+        end 
+      end
+    end
   end
 
-  for l = #asteroids.rocks, 1, -1 do
-    for m = #asteroids.rocks, 1, -1 do
-      local dx = asteroids.rocks[l].x - asteroids.rocks[m].x
-      local dy = asteroids.rocks[l].y - asteroids.rocks[m].y
-      local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
+  -- for l = #asteroids.rocks, 1, -1 do
+  --   for m = #asteroids.rocks, 1, -1 do
+  --     local dx = asteroids.rocks[l].x - asteroids.rocks[m].x
+  --     local dy = asteroids.rocks[l].y - asteroids.rocks[m].y
+  --     local d = ath.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
       
-    end 
-  end
+  --   end 
+  -- end
 
 end
 
@@ -172,6 +199,9 @@ function resetGame()
   score = 0
   aidkit.reset()
   ship.reset()
+  raja.reset()
+  asteroids.reset()
+  ecanon.reset()
    
   ship.moveTo(centerX, shipAnchorY)
 end
@@ -221,20 +251,21 @@ function love.load()
   
   canon = require('canon')
   ecanon = require('ecanon')
-  stars = require('stars')
+  -- stars = require('stars')
   asteroids = require('asteroids')
   aidkit = require('aidkit')
   canister = require('canister')
   explosion = require('explosion')
   powerup = require('powerup')
   walls = require('walls')
+  raja  = require('raja')
+  -- raja = love.graphics.newImage('assets/zelda.png')
   
   font = love.graphics.newFont('whitrabt.ttf' , 16)
   love.graphics.setFont(font)
   
   gameoverImg = love.graphics.newImage('gameover.png')
   playImg = love.graphics.newImage('play.png')
-  raja = love.graphics.newImage('assets/zelda.png')
   
   pause.value = 0
   score = 0
@@ -251,7 +282,7 @@ function love.update(dt)
   if not gameover then
     if not pause.is then
       bgspace.update()
-      stars.update()
+      -- stars.update()
       
       aidkit.update()
       canister.update()
@@ -261,7 +292,23 @@ function love.update(dt)
   
       ecanon.update()
       asteroids.update()  
+
+      dialog:play()
+
+      raja.update(dt)
+
+      love.audio.play(dialog)
+      love.audio.play(bgmusic)  
+    elseif pause.is then
+      love.audio.pause(dialog)
+      love.audio.pause(bgmusic)
+      love.audio.pause(engine)
     end
+  else
+    love.audio.pause(dialog)
+    love.audio.pause(bgmusic)
+    love.audio.pause(engine)
+    ship.update(dt)
   end
 
   explosion.update(dt)
@@ -274,16 +321,16 @@ function love.update(dt)
     end
     
     if not gameover then
-      asteroids.create(dt)
-      fire_tank_musuh() 
-      checkCollision()
-      
-      if aidkit.heal(ship) or canister.fill(ship) then
-        powerup.emit(ship.x, ship.y)
+      if not pause.is then
+        asteroids.create(dt)
+        fire_tank_musuh() 
+        checkCollision()
+        
+        if aidkit.heal(ship) or canister.fill(ship) then
+          powerup.emit(ship.x, ship.y)
+        end
       end
     end
-    
-    dialog:play()
     -- Tambah kondisi apabila gameover, ship tidak bisa digerakkan
                                               
     if not gameover then
@@ -371,7 +418,10 @@ function love.draw()
     drawAll()
     if pause.is then
       love.graphics.setColor(1,1,1,1)
-      love.graphics.draw(pauseImg, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2, 0, 1, 1)
+      -- Button pause      
+      love.graphics.setFont(font)
+      love.graphics.print("==PAUSE==", love.graphics.getWidth() / 2 - 89, love.graphics.getHeight() / 2 - 80, 0, 2, 2)
+      love.graphics.draw(pauseImg, (love.graphics.getWidth() / 2)-55, (love.graphics.getHeight()/2)-40, 0, 1, 1)
     end
   elseif ( menu.splash == 4) then
     displayHighScore()
@@ -380,12 +430,6 @@ function love.draw()
   end
 end
 
-
-function raja_tampil()
-  
-  love.graphics.draw(raja, 650 , 650 , rotation , -1 ,1)
-  
-end
 
 function love.mousepressed(x, y, button)
   if button == 1 then
@@ -421,9 +465,6 @@ end
 --   end
 -- end
 
-
--- S
-
 -- function love.keypressed()
   
 -- end
@@ -433,7 +474,7 @@ function drawAll()
   love.graphics.setColor(1, 1, 1, 1)
   bgspace.draw()
   
-  stars.draw()
+  -- stars.draw()
   walls.draw()
 
   -- NOTE gambar musuh dan pelurunya
@@ -449,8 +490,8 @@ function drawAll()
   canister.draw()
   explosion.draw()
   powerup.draw()
-  
-  raja_tampil()
+
+  raja.draw()
 
   showHUD()
 end

@@ -12,7 +12,7 @@ ship.y = height
 ship.dx = ship.x
 ship.dy = ship.y
 ship.r = 0
-ship.shield = 3
+ship.shield = 10
 ship.fuel = 42
 ship.life = true
 ship.height = height
@@ -34,20 +34,20 @@ shake:setColors(1, 1, 1, 0.6, 1, 0, 0, 0.5)
 
 local function showInfo()
   love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.print('shield', 10, height - 28)
-  love.graphics.print('fuel', 75, height - 28)
+  love.graphics.print('tank shield', 10, height - 28)
+  love.graphics.print('fuel', 120, height - 28)
   
   -- shield bar
-  if ship.shield == 3 then 
+  if ship.shield <= 10 and ship.shield >=7 then 
     love.graphics.setColor(0, 1, 0, 1)
-  elseif ship.shield == 2 then 
+  elseif ship.shield <= 6 and ship.shield >=4 then 
     love.graphics.setColor(1, 1, 0, 1)
-  elseif ship.shield == 1 then 
+  elseif ship.shield <= 3 then 
     love.graphics.setColor(1, 0, 0, 1) 
   end
   
-  love.graphics.rectangle('line', 10, height - 15, 44, 5)
-  love.graphics.rectangle('fill', 11, height - 14, 14 * ship.shield, 3)
+  love.graphics.rectangle('line', 10, height - 15, 98, 5)
+  love.graphics.rectangle('fill', 11, height - 14, 9.8 * ship.shield, 3)
   
   -- fuel bar
   if ship.fuel >= 28 then 
@@ -60,8 +60,8 @@ local function showInfo()
     love.graphics.setColor(1, 1, 1, 1)
   end
   
-  love.graphics.rectangle('line', 75, height - 15, 44, 5)
-  love.graphics.rectangle('fill', 76, height - 14, ship.fuel, 3)
+  love.graphics.rectangle('line', 120, height - 15, 44, 5)
+  love.graphics.rectangle('fill', 120, height - 14, ship.fuel, 3)
   
   love.graphics.setColor(1, 1, 1, 1)
 end
@@ -69,7 +69,7 @@ end
 function ship.reset()
   ship.r = 0
   ship.life = true
-  ship.shield = 3
+  ship.shield = 10
   ship.fuel = 42
   speed = 0.05
 end
@@ -108,8 +108,7 @@ function ship.draw()
   love.graphics.draw(sprite, ship.x, ship.y , ship.r, 1, 1, sprite:getWidth() / 2, sprite:getHeight() / 2 )
   love.graphics.draw(shake)  
   showInfo()
-    
-  
+
 end
 
 function ship.moveTo(dx, dy)
