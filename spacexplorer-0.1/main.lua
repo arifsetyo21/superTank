@@ -49,7 +49,7 @@ local conn
 local o_ten_one = require "libs/o-ten-one"
 local splashy = require 'libs/splashy'
 local menu = {}
-menu.splash = 4
+menu.splash = 1
 menu.main = 0
 
 -- circular collision detection
@@ -269,7 +269,7 @@ function love.load()
   powerup = require('powerup')
   walls = require('walls')
   raja  = require('raja')
-  highscorenote = require('highscorenote')
+  -- highscorenote = require('highscorenote')
   
   font = love.graphics.newFont('whitrabt.ttf' , 16)
   love.graphics.setFont(font)
@@ -319,27 +319,6 @@ function love.update(dt)
     love.audio.pause(bgmusic)
     love.audio.pause(engine)
     ship.update(dt)
-
-    local f = io.open("score.xml", "r")
-    local content = f:read("*all")
-    f:close()
-
-    local score1 = [
-      '[[
-      <people>
-        <person type="natural">
-          <name>Manoel</name>
-          <city>Palmas-TO</city>
-        </person>
-        <person type="legal">
-          <name>University of Brasília</name>
-          <city>Brasília-DF</city>
-        </person>  
-      </people>    
-      ]]'
-
-    local parser = xml2lua.parser(handler)
-    parser:parse(score1)
 
   end
 
@@ -548,7 +527,7 @@ end
 function displayHighScore()
   background = love.graphics.newImage('assets/181107171032-02-ww2-us-german-vets-painting-tank-full-169.jpg')
   love.graphics.draw(background, 0, 0, 0)
-  highscorenote.tampil()
+  -- highscorenote.tampil()
 end
 -- function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
 --   return x1 == x2+w2 and
