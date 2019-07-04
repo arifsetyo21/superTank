@@ -33,6 +33,7 @@ local walls
 -- score and button
 local score
 local hiscore
+local highscorenote
 local gameover
 local gameoverImg
 local playImg
@@ -48,7 +49,7 @@ local conn
 local o_ten_one = require "libs/o-ten-one"
 local splashy = require 'libs/splashy'
 local menu = {}
-menu.splash = 1
+menu.splash = 4
 menu.main = 0
 
 -- circular collision detection
@@ -72,10 +73,10 @@ local function checkCollision()
       end     
     end
 
-    -- -- NOTE check if asteroids.rocks.y > love.graphics.getHeight()
-    -- if(asteroids.rocks[i].y > love.graphics.getHeight() + 5) then
-    --   asteroids.rocks[i].life = false
-    -- end
+    -- NOTE check if asteroids.rocks.y > love.graphics.getHeight()
+    if(asteroids.rocks[i].y > love.graphics.getHeight() + 5) then
+      asteroids.rocks[i].life = false
+    end
     
     -- local wx = walls.x - asteroids.rocks[i].x
     -- local wy = walls.y - asteroids.rocks[i].y
@@ -150,8 +151,11 @@ local function checkCollision()
     for yWall = 1, #walls do
       for xWall = 1, #walls[yWall] do
         if walls[yWall][xWall] == 1 then
-            if ecanon.missile[k].y >= (yWall-1) * 72 and (ecanon.missile[k].x <= 220 or ecanon.missile[k].x >= 790) then
-              explosion.emit(ecanon.missile[k].x, ecanon.missile[k].y)
+          if ecanon.missile[k].y >= (yWall-1) * 72 and (ecanon.missile[k].x <= 72 or ecanon.missile[k].x >= 1294) then
+            explosion.emit(ecanon.missile[k].x, ecanon.missile[k].y)
+            ecanon.missile[k].life = false
+          elseif ecanon.missile[k].y <= 432 and ecanon.missile[k].y >= 360 and (ecanon.missile[k].x <= 220 or ecanon.missile[k].x >= 790) then
+            explosion.emit(ecanon.missile[k].x, ecanon.missile[k].y)
             ecanon.missile[k].life = false
           end
         end 
@@ -159,15 +163,21 @@ local function checkCollision()
     end
   end
 
-  -- for l = #asteroids.rocks, 1, -1 do
-  --   for m = #asteroids.rocks, 1, -1 do
-  --     local dx = asteroids.rocks[l].x - asteroids.rocks[m].x
-  --     local dy = asteroids.rocks[l].y - asteroids.rocks[m].y
-  --     local d = ath.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
-      
-  --   end 
-  -- end
-
+  for f = #canon.missile, 1, -1 do
+    for yWall = 1, #walls do
+      for xWall = 1, #walls[yWall] do
+        if walls[yWall][xWall] == 1 then
+          if canon.missile[f].y <= (yWall) * 72 and canon.missile[f].y >= (yWall-1) *72 and (canon.missile[f].x <= 72 or canon.missile[f].x >= 1294) then
+            explosion.emit(canon.missile[f].x, canon.missile[f].y)
+            canon.missile[f].life = false
+          elseif canon.missile[f].y <= 432 and canon.missile[f].y >= 360 and (canon.missile[f].x <= 220 or canon.missile[f].x >= 790) then
+            explosion.emit(canon.missile[f].x, canon.missile[f].y)
+            canon.missile[f].life = false
+          end
+        end
+      end
+    end
+  end
 end
 
 -- show score, hi-schore, and shield-bar
@@ -259,7 +269,7 @@ function love.load()
   powerup = require('powerup')
   walls = require('walls')
   raja  = require('raja')
-  -- raja = love.graphics.newImage('assets/zelda.png')
+  highscorenote = require('highscorenote')
   
   font = love.graphics.newFont('whitrabt.ttf' , 16)
   love.graphics.setFont(font)
@@ -309,6 +319,28 @@ function love.update(dt)
     love.audio.pause(bgmusic)
     love.audio.pause(engine)
     ship.update(dt)
+
+    local f = io.open("score.xml", "r")
+    local content = f:read("*all")
+    f:close()
+
+    local score1 = [
+      '[[
+      <people>
+        <person type="natural">
+          <name>Manoel</name>
+          <city>Palmas-TO</city>
+        </person>
+        <person type="legal">
+          <name>University of Brasília</name>
+          <city>Brasília-DF</city>
+        </person>  
+      </people>    
+      ]]'
+
+    local parser = xml2lua.parser(handler)
+    parser:parse(score1)
+
   end
 
   explosion.update(dt)
@@ -384,6 +416,8 @@ function love.update(dt)
     elseif love.keyboard.isDown('o') then
       menu.splash = 2
       splash:skip()
+    elseif love.keyboard.isDown('i') then
+      menu.splash = 4
     elseif love.keyboard.isDown('p') then
       pauseFunc()
     end
@@ -453,6 +487,21 @@ function love.mousepressed(x, y, button)
     --   ship.moveTo(x, shipAnchorY)
     --   -- canon.fire(ship.x, shipAnchorY, ship.r)
     --   canon.fire(ship.x, ship.y, ship.r)
+    elseif not gameover then
+      local dx = ((love.graphics.getWidth()/2)-80) - x
+      local dy = (love.graphics.getHeight()/2) - y
+      local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
+      
+      if d <= 30 then
+        menu.splash = 3
+      end
+
+      local ex = ((love.graphics.getWidth()/2)-80) - x
+      local ey = ((love.graphics.getWidth()/2) + 100) - y
+      local e = math.sqrt(math.pow(ex, 2) + math.pow(ey, 2))
+      if e <= 30 then
+        menu.splash = 4
+      end
     end
   end
 end
@@ -496,6 +545,11 @@ function drawAll()
   showHUD()
 end
 
+function displayHighScore()
+  background = love.graphics.newImage('assets/181107171032-02-ww2-us-german-vets-painting-tank-full-169.jpg')
+  love.graphics.draw(background, 0, 0, 0)
+  highscorenote.tampil()
+end
 -- function CheckCollision(x1,y1,w1,h1, x2,y2,w2,h2)
 --   return x1 == x2+w2 and
 --          x2 == x1+w1 and

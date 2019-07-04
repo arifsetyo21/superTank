@@ -11,7 +11,7 @@ function asteroids.create(dt)
   et = et + dt
   if et >=  waktu then -- create asteroid, tiap 2 detik
     local r = {}
-    r.x = math.random(10, love.graphics.getWidth() - 10)
+    r.x = math.random(72, love.graphics.getWidth() - 72)
     r.y = math.random(-30, -15)
     r.a = 0
     r.life = true
@@ -57,7 +57,7 @@ function asteroids.update()
     if (not asteroids.rocks[i].life) then -- jika musuh mati maka hapus dari array 
       table.remove(asteroids.rocks, i)
     end
-     end
+  end
         
 end  
 

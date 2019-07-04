@@ -59,4 +59,5 @@ function ecanon.draw()
     love.graphics.draw(sprite, ecanon.missile[i].x, ecanon.missile[i].y, ecanon.missile[i].r, 1, 1, 1, 0)
   end
 end
+
 return ecanon
