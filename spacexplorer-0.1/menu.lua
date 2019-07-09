@@ -5,4 +5,3 @@
    2. High score
    3. Exit
 ]]
-
