@@ -42,15 +42,25 @@ function asteroids.update()
       asteroids.rocks[i].a = asteroids.rocks[i].a 
       asteroids.rocks[i].r = math.rad(90)
      
-    elseif (asteroids.rocks[i].x > 600) then
+    elseif (asteroids.rocks[i].x > 600 and asteroids.rocks[i].y > 250) then
       asteroids.rocks[i].x = asteroids.rocks[i].x - 1 -- pindah ke posisi x jika posisi 600
       asteroids.rocks[i].a = asteroids.rocks[i].a 
       asteroids.rocks[i].r = math.rad(270)
-    else
-      -- asteroids.rocks[i].y = asteroids.rocks[i].y + 1  -- speed musuh
-      -- asteroids.rocks[i].a = asteroids.rocks[i].a 
-      -- asteroids.rocks[i].r = math.rad(180)
-      asteroids.movement(i, 'down')
+      
+    elseif(asteroids.rocks[i].y > 650  and asteroids.rocks[i].x < 800) then
+         
+       asteroids.rocks[i].x = asteroids.rocks[i].x + 1 -- speed musuh
+       asteroids.rocks[i].a = asteroids.rocks[i].a 
+       asteroids.rocks[i].r = math.rad(90)     
+       
+    elseif( asteroids.rocks[i].y > 650  and asteroids.rocks[i].x < 350) then
+      asteroids.rocks[i].x = asteroids.rocks[i].x + 0 -- speed musuh
+       asteroids.rocks[i].a = asteroids.rocks[i].a 
+       asteroids.rocks[i].r = math.rad(90) 
+     
+     else
+      asteroids.movement(i,'down')
+    
     end
   
   
