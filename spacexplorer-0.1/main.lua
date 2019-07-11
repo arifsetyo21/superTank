@@ -6,6 +6,10 @@
 --   BG Music: Cavern and Blade (Open Game Art)
 ---------------------------------------------------------------------------
 
+-- dabuton libs
+io.stdout:setvbuf('no') --print console messages in real time
+local buttonLib --Require the library so we can use it.
+
 -- coordinat
 local centerX
 local centerY
@@ -61,7 +65,7 @@ local function checkCollision()
       local dy = canon.missile[j].y - asteroids.rocks[i].y
       local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2)) -- distance, using hypot
       
-      if d <= 30 then
+      if d <= 40 then
         explosion.emit(asteroids.rocks[i].x, asteroids.rocks[i].y)
         canon.missile[j].life = false
         asteroids.rocks[i].life = false
@@ -283,7 +287,11 @@ function love.load()
   gameover = false
 
 	--I organized this way: "x", "y", "width", "height", "function", "arguments in a table or nil"
-	--I think it's easier to use width and height instead of first x/y and last x/y
+  --I think it's easier to use width and height instead of first x/y and last x/y
+  
+  -- add button library
+  buttonLib = require "libs/dabuton"
+  
   
 end
 
@@ -324,6 +332,10 @@ function love.update(dt)
 
   explosion.update(dt)
   powerup.update(dt)
+
+  if menu.splash == 2 then
+    
+  end
   
   if menu.splash == 3 then
     if ship.fuel <= 0 then
@@ -423,6 +435,7 @@ function love.draw()
     drawMenu()
     bgmusic:play()
     love.graphics.setColor(1, 1, 1, 1)
+    buttonLib.draw()
     love.graphics.draw(btn_play, (love.graphics.getWidth() / 2) - 110, (love.graphics.getHeight() / 2), 0)
     love.graphics.draw(btn_hc, (love.graphics.getWidth() / 2) - 150, (love.graphics.getHeight() / 2) + 50, 0)
     love.graphics.draw(btn_exit, (love.graphics.getWidth() / 2) - 110, (love.graphics.getHeight() / 2) + 100, 0)
