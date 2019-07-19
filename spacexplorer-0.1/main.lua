@@ -71,8 +71,9 @@ local function checkCollision()
         asteroids.rocks[i].life = false
         score = score + 10
         
-        if score > hiscore then 
-          hiscore = score 
+        if score > tonumber(hiscore) then 
+          hiscore = score
+          success, message = love.filesystem.write( "score.txt", hiscore, all )
         end
       end     
     end
@@ -188,8 +189,10 @@ end
 local function showHUD()
   love.graphics.setColor(1, 1, 1, 1)
   if score == hiscore then love.graphics.setColor(1, 1, 0, 1) end
-  love.graphics.print('score: ' .. score, 10, 10)
-  love.graphics.print('hi-score: ' .. hiscore, width - 135, 10)
+  love.graphics.setFont(bigFont)
+  love.graphics.print('score: ' .. score, 90, 10, 0, 1)
+  love.graphics.print('hi-score: ' .. hiscore, width - 250, 10)
+  love.graphics.setFont(font)
   
   if gameover then
     love.graphics.setColor(1, 1, 1, 1)
@@ -242,7 +245,7 @@ function love.load()
   -- NOTE Main Menu Button
   btn_play = love.graphics.newImage('assets/button/button_play_1.png')
   btn_exit = love.graphics.newImage('assets/button/button_exit_1.png')
-  btn_hc = love.graphics.newImage('assets/button/button_high-score_1.png')
+  -- btn_hc = love.graphics.newImage('assets/button/button_high-score_1.png')
   btn_back = love.graphics.newImage('assets/button/button_back_1.png')
   pauseImg = love.graphics.newImage('assets/button/white_pause.png')
 
@@ -277,13 +280,22 @@ function love.load()
   
   font = love.graphics.newFont('whitrabt.ttf' , 16)
   love.graphics.setFont(font)
+
+  bigFont = love.graphics.newFont('whitrabt.ttf' , 20)
   
   gameoverImg = love.graphics.newImage('gameover.png')
   playImg = love.graphics.newImage('play.png')
   
   pause.value = 0
   score = 0
-  hiscore = 0
+  contents, size = love.filesystem.read("score.txt", all)
+
+  if(tonumber(contents) > 0) then
+    hiscore = contents
+  else
+    hiscore = 0
+  end
+
   gameover = false
 
 	--I organized this way: "x", "y", "width", "height", "function", "arguments in a table or nil"
@@ -291,7 +303,6 @@ function love.load()
   
   -- add button library
   buttonLib = require "libs/dabuton"
-  
   
 end
 
@@ -334,7 +345,7 @@ function love.update(dt)
   powerup.update(dt)
 
   if menu.splash == 2 then
-    
+    buttonLib.update()
   end
   
   if menu.splash == 3 then
@@ -432,19 +443,22 @@ function love.draw()
     splash:draw()
     love.graphics.print("press 'O' key", (love.graphics.getWidth() / 2) - 100, (love.graphics.getHeight() / 2) + 300, 0, 1.5, 1.5)
   elseif( menu.splash == 2) then
+    menu_splash_2()
+    buttonLib.draw()
     drawMenu()
     bgmusic:play()
+    -- love.graphics.setColor(1, 1, 1, 1)
     love.graphics.setColor(1, 1, 1, 1)
-    buttonLib.draw()
     love.graphics.draw(btn_play, (love.graphics.getWidth() / 2) - 110, (love.graphics.getHeight() / 2), 0)
-    love.graphics.draw(btn_hc, (love.graphics.getWidth() / 2) - 150, (love.graphics.getHeight() / 2) + 50, 0)
-    love.graphics.draw(btn_exit, (love.graphics.getWidth() / 2) - 110, (love.graphics.getHeight() / 2) + 100, 0)
+    -- love.graphics.draw(btn_hc, (love.graphics.getWidth() / 2) - 150, (love.graphics.getHeight() / 2) + 50, 0)
+    love.graphics.draw(btn_exit, (love.graphics.getWidth() / 2) - 110, (love.graphics.getHeight() / 2) + 50, 0)
   elseif ( menu.splash == 3 ) then
     -- splashy.skipAll()
     drawAll()
     if pause.is then
       love.graphics.setColor(1,1,1,1)
       -- Button pause      
+      gameoverMenu()
       love.graphics.setFont(font)
       love.graphics.print("==PAUSE==", love.graphics.getWidth() / 2 - 89, love.graphics.getHeight() / 2 - 80, 0, 2, 2)
       love.graphics.draw(pauseImg, (love.graphics.getWidth() / 2)-55, (love.graphics.getHeight()/2)-40, 0, 1, 1)
@@ -466,33 +480,6 @@ function love.mousepressed(x, y, button)
       
       if d <= 24 then
         resetGame()
-      end
-    elseif not gameover then
-      local dx = ((love.graphics.getWidth()/2)-80) - x
-      local dy = (love.graphics.getHeight()/2) - y
-      local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
-      
-      if d <= 30 then
-        menu.splash = 3
-      end
-    -- else
-    --   ship.moveTo(x, shipAnchorY)
-    --   -- canon.fire(ship.x, shipAnchorY, ship.r)
-    --   canon.fire(ship.x, ship.y, ship.r)
-    elseif not gameover then
-      local dx = ((love.graphics.getWidth()/2)-80) - x
-      local dy = (love.graphics.getHeight()/2) - y
-      local d = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
-      
-      if d <= 30 then
-        menu.splash = 3
-      end
-
-      local ex = ((love.graphics.getWidth()/2)-80) - x
-      local ey = ((love.graphics.getWidth()/2) + 100) - y
-      local e = math.sqrt(math.pow(ex, 2) + math.pow(ey, 2))
-      if e <= 30 then
-        menu.splash = 4
       end
     end
   end
@@ -604,4 +591,133 @@ function love.keypressed(key)
     resetGame()
     love.event.push("quit")
   end
+end
+
+function exit()
+  love.event.push("quit")
+end
+
+function menu_splash_2()
+  local flags1 = {
+    --Position and size
+    xPos = 0,
+    yPos  = 0,
+    width = 100,
+    height = 50,
+
+    --Color for the button
+    color = {
+      red = 255,
+      green = 255,
+      blue = 255,
+      alpha = 0.001
+    },
+
+    --Settings for the border
+    border = {
+      width = 0,
+      red = 0,
+      green = 0,
+      blue = 0,
+    },
+
+    onClick = function()
+      menu.splash = 3
+    end,
+  }
+
+  --Setting up a table called flags with data for our button2
+  local flags2 = {
+    --Position and size
+    xPos = 0,
+    yPos  = 0,
+    width = 100,
+    height = 50,
+
+    --Color for the button
+    color = {
+      red = 255,
+      green = 255,
+      blue = 255,
+    },
+
+    --Settings for the border
+    border = {
+      width = 0,
+      red = 0,
+      green = 0,
+      blue = 0,
+    },
+
+    onClick = function()
+      exit()
+    end,
+  }
+
+  id1 = buttonLib.spawn(flags1)  -- Spawn button1
+  id2 = buttonLib.spawn(flags2)  -- Spawn button2
+  id1:setPos(love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2)
+  id2:setPos(love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 + 50)
+end
+
+function gameoverMenu()
+  local reset = {
+    --Position and size
+    xPos = 0,
+    yPos  = 0,
+    width = 100,
+    height = 50,
+
+    --Color for the button
+    color = {
+      red = 255,
+      green = 255,
+      blue = 255,
+    },
+
+    --Settings for the border
+    border = {
+      width = 0,
+      red = 0,  
+      green = 0,
+      blue = 0,
+    },
+
+    onClick = function()
+      menu.splash = 3
+    end,
+  }
+
+  --Setting up a table called flags with data for our button2
+  local exit = {
+    --Position and size
+    xPos = 0,
+    yPos  = 0,
+    width = 100,
+    height = 50,
+
+    --Color for the button
+    color = {
+      red = 255,
+      green = 255,
+      blue = 255,
+    },
+
+    --Settings for the border
+    border = {
+      width = 0,
+      red = 0,
+      green = 0,
+      blue = 0,
+    },
+
+    onClick = function()
+      exit()
+    end,
+  }
+
+  id1 = buttonLib.spawn(reset)  -- Spawn button1
+  id2 = buttonLib.spawn(exit)  -- Spawn button2
+  id1:setPos(love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2)
+  id2:setPos(love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 + 50)
 end
