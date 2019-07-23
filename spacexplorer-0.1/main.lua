@@ -335,7 +335,7 @@ function love.update(dt)
     end
   else
     love.audio.pause(dialog)
-    love.audio.pause(bgmusic)
+    --love.audio.pause(bgmusic)
     love.audio.pause(engine)
     ship.update(dt)
 
